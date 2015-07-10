@@ -1,7 +1,7 @@
 require('./helpers/spec_helper.js');
 
 describe('snippet', function() {
-  var elementTagNames, appendedChildren;
+  var elementTagNames, appendedChildren, localGetKeys, localGetKey;
   var requireIndex = function() {
     delete require.cache[process.cwd()+'/index.js'];
 
@@ -11,8 +11,18 @@ describe('snippet', function() {
   beforeEach(function() {
     elementTagNames = [];
     appendedChildren = [];
+    localGetKeys = [];
+    localGetKey = null;
 
-    window = {};
+    window = {
+      localStorage: {
+        getItem: function(key) {
+          localGetKeys.push(key);
+          return localGetKey;
+        }
+      }
+    };
+
     document = {
       createElement: function(name) {
         var tag = { };
@@ -48,6 +58,41 @@ describe('snippet', function() {
     it('should append the script to the head', function() {
       expect(appendedChildren.length).toBe(1);
       expect(appendedChildren[0]).toBe(elementTagNames[0][1]);
+    });
+
+    it('should check for editing', function() {
+      expect(localGetKeys.length).toBe(1);
+      expect(localGetKeys[0]).toBe('chmln:editor-token');
+    });
+  });
+
+  describe('script when editing', function() {
+    beforeEach(function() {
+      localGetKey = 'existing-key';
+
+      requireIndex();
+    });
+
+    it('should be synchronous - chmln', function() {
+      expect(elementTagNames[0][1].async).toBe(false);
+    });
+
+    it('should add a second script - editor', function() {
+      expect(elementTagNames.length).toBe(2);
+      expect(elementTagNames[1][0]).toBe('script');
+    });
+
+    it('should be synchronous - editor', function() {
+      expect(elementTagNames[1][1].async).toBe(false);
+    });
+
+    it('should have the cdn url - editor', function() {
+      expect(elementTagNames[1][1].src).toBe('https://cdn.trychameleon.com/editor/index.min.js');
+    });
+
+    it('should append the script to the head - editor', function() {
+      expect(appendedChildren.length).toBe(2);
+      expect(appendedChildren[1]).toBe(elementTagNames[1][1]);
     });
   });
 
