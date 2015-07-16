@@ -198,4 +198,18 @@ describe('snippet', function() {
       expect(Array.prototype.slice.call(window.chmln.set_a[1])).toEqual([1284]);
     });
   });
+
+  describe('._data', function() {
+    beforeEach(function() {
+      requireIndex();
+
+      window.chmln._data({campaigns:[12,3], steps:[1]});
+    });
+
+    it('should queue the requests', function() {
+      expect(window.chmln._data_a.length).toBe(1);
+
+      expect(Array.prototype.slice.call(window.chmln._data_a[0])).toEqual([{campaigns:[12,3], steps:[1]}]);
+    });
+  });
 });

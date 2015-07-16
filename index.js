@@ -15,7 +15,7 @@
     doc.head.appendChild(editor);
   }
 
-  var names = 'setup alias track set'.split(' ');
+  var names = 'setup alias track set _data'.split(' ');
 
   for(var i = 0; i<names.length; i++) {
     (function() {
