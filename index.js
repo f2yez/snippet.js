@@ -1,15 +1,7 @@
-(function(doc,win,token) {
-  var chmln = 'chmln', editor = 'editor',
-    object = win[chmln] = { token: token },
-    chmlnURL = indexUrl(chmln),
-    editorToken = fetchCookie('token'),
-    editing = !!editorToken,
-    editorURL = indexUrl(editor),
-    dataURL = indexUrl('accounts', token),
-    loginToken = fetchParameter('login'),
-    login = !!loginToken;
-
-  var names = 'setup alias track set _data'.split(' ');
+(function(doc,win,accountId) {
+  var chmln = 'chmln', editor = 'editor', token = 'token',
+    object = win[chmln] = { token: accountId = (localGet(editor+'-account-id') || accountId)},
+    names = 'setup alias track set _data'.split(' ');
 
   for(var i = 0; i<names.length; i++) {
     (function() {
@@ -20,18 +12,26 @@
     })();
   }
 
+  var chmlnURL = indexUrl(chmln),
+    editorToken = fetchCookie(token),
+    editing = !!editorToken,
+    editorURL = indexUrl(editor),
+    dataURL = indexUrl('accounts', accountId),
+    loginToken = fetchParameter('login'),
+    login = !!loginToken;
+
   newScript(chmlnURL, !editing && !login);
 
   if(login) {
     newScript(editURL('logins', loginToken));
   }
 
-  editorToken = fetchCookie('token');
+  editorToken = fetchCookie(token);
   editing = !!editorToken;
 
   if(editing) {
     newScript(editorURL);
-    newScript(editURL('tokens', editorToken));
+    newScript(editURL(token+'s', editorToken));
   } else {
     newScript(dataURL, true);
   }
@@ -43,8 +43,12 @@
     doc.head.appendChild(script);
   }
 
+  function localGet(name) {
+    return win.localStorage && win.localStorage.getItem(chmln+':'+name)
+  }
+
   function localFetch(name, id) {
-    var value = (win.localStorage && win.localStorage.getItem(chmln+':'+name+'-url'));
+    var value = localGet(name+'-url');
     value = (value && id) ? value.replace(':id', id) : value;
 
     return value;

@@ -161,7 +161,7 @@ describe('snippet', function() {
     });
   });
 
-  describe('locally given endpoints', function() {
+  describe('locally given values', function() {
     beforeEach(function() {
       localGets['chmln:chmln-url'] = 'https://chmln.js';
       localGets['chmln:accounts-url'] = 'https://accounts/:id/5.js';
@@ -196,6 +196,18 @@ describe('snippet', function() {
         expect(elementTagNames[1][1].src).toBe('https://l/LOGIN_TOKEN_123/20.js');
         expect(elementTagNames[2][1].src).toBe('https://editor.js.net');
         expect(elementTagNames[3][1].src).toBe('https://l/YES123/10.js');
+      });
+    });
+
+    describe('when given an account id', function() {
+      beforeEach(function() {
+        localGets['chmln:editor-account-id'] = 'ASDF1234';
+
+        requireIndex();
+      });
+
+      it('should have the value', function() {
+        expect(elementTagNames[1][1].src).toBe('https://accounts/ASDF1234/5.js');
       });
     });
 
