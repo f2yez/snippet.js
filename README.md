@@ -1,8 +1,9 @@
 # snippet.js
 
-[![Circle CI](https://circleci.com/gh/trychameleon/snippet.js.svg?style=svg)](https://circleci.com/gh/trychameleon/snippet.js)  
+[![npm version](https://badge.fury.io/js/snippet.js.svg)](http://badge.fury.io/js/snippet.js)  
 [![Build Status](https://semaphoreci.com/api/v1/projects/c0b396ff-cd22-49be-944e-97da670198e0/479935/badge.svg)](https://semaphoreci.com/bnorton/snippet-js)
-[![npm version](https://badge.fury.io/js/snippet.js.svg)](http://badge.fury.io/js/snippet.js)
+[![Circle CI](https://circleci.com/gh/trychameleon/snippet.js.svg?style=svg)](https://circleci.com/gh/trychameleon/snippet.js)  
+[![Code Climate](https://codeclimate.com/github/trychameleon/snippet.js/badges/gpa.svg)](https://codeclimate.com/github/trychameleon/snippet.js)  
 
 #Getting started
 
