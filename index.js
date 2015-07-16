@@ -1,6 +1,6 @@
 (function(doc,win,token) {
   var object = win.chmln = { token: token },
-    editing = !!(win.localStorage && win.localStorage.getItem('chmln:editor-token')),
+    editing = !!localFetch('token', null),
     script = doc.createElement('script');
 
   script.async = !editing;
@@ -10,7 +10,7 @@
   if(editing) {
     var editor = doc.createElement('script');
     editor.async = false;
-    editor.src = 'https://cdn.trychameleon.com/editor/index.min.js';
+    editor.src = localFetch('url', 'https://cdn.trychameleon.com/editor/index.min.js');
     doc.head.appendChild(editor);
   }
 
@@ -23,5 +23,9 @@
         calls.push(arguments);
       };
     })();
+  }
+
+  function localFetch(name, orReturn) {
+    return (win.localStorage && win.localStorage.getItem('chmln:editor-'+name)) || orReturn;
   }
 })(document,window,'{{ACCOUNT_ID}}');

@@ -1,7 +1,7 @@
 require('./helpers/spec_helper.js');
 
 describe('snippet', function() {
-  var elementTagNames, appendedChildren, localGetKeys, localGetKey;
+  var elementTagNames, appendedChildren, localGetKeys, localGets;
   var requireIndex = function() {
     delete require.cache[process.cwd()+'/index.js'];
 
@@ -12,13 +12,13 @@ describe('snippet', function() {
     elementTagNames = [];
     appendedChildren = [];
     localGetKeys = [];
-    localGetKey = null;
+    localGets = {};
 
     window = {
       localStorage: {
         getItem: function(key) {
           localGetKeys.push(key);
-          return localGetKey;
+          return localGets[key];
         }
       }
     };
@@ -68,7 +68,7 @@ describe('snippet', function() {
 
   describe('script when editing', function() {
     beforeEach(function() {
-      localGetKey = 'existing-key';
+      localGets['chmln:editor-token'] = 'existing-key';
 
       requireIndex();
     });
@@ -114,6 +114,24 @@ describe('snippet', function() {
     it('should add a script', function() {
       expect(elementTagNames.length).toBe(1);
       expect(elementTagNames[0][0]).toBe('script');
+    });
+  });
+
+  describe('script with local endpoint url', function() {
+    beforeEach(function() {
+      localGets['chmln:editor-token'] = 'editor-token';
+      localGets['chmln:editor-url'] = 'https://foo.bar.com';
+
+      requireIndex();
+    });
+
+    it('should check for an editor uel', function() {
+      expect(localGetKeys.length).toBe(2);
+      expect(localGetKeys[1]).toBe('chmln:editor-url');
+    });
+
+    it('should have the given url - editor', function() {
+      expect(elementTagNames[1][1].src).toBe('https://foo.bar.com');
     });
   });
 
