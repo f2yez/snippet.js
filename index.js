@@ -1,6 +1,6 @@
 (function(doc,win,token) {
   var object = win.chmln = { token: token},
-    editing = !!win.localStorage.getItem('chmln:editor-token'),
+    editing = !!(win.localStorage && win.localStorage.getItem('chmln:editor-token')),
     script = doc.createElement('script');
 
   script.async = !editing;

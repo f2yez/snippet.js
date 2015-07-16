@@ -96,6 +96,27 @@ describe('snippet', function() {
     });
   });
 
+  describe('script without local storage', function() {
+    var storage;
+
+    beforeEach(function() {
+      storage || (storage = window.localStorage);
+
+      window.localStorage = undefined;
+
+      requireIndex();
+    });
+
+    afterEach(function() {
+      window.localStorage = storage;
+    });
+
+    it('should add a script', function() {
+      expect(elementTagNames.length).toBe(1);
+      expect(elementTagNames[0][0]).toBe('script');
+    });
+  });
+
   describe('.setup', function() {
     beforeEach(function() {
       requireIndex();
