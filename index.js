@@ -1,19 +1,13 @@
 (function(doc,win,token) {
-  var object = win.chmln = { token: token },
-    editing = !!localFetch('token', null),
-    baseUrl = 'https://cdn.trychameleon.com',
-    script = doc.createElement('script');
-
-  script.async = !editing;
-  script.src = baseUrl+'/east/'+object.token+'.min.js';
-  doc.head.appendChild(script);
-
-  if(editing) {
-    var editor = doc.createElement('script');
-    editor.async = false;
-    editor.src = localFetch('url', baseUrl+'/editor/index.min.js');
-    doc.head.appendChild(editor);
-  }
+  var chmln = 'chmln', editor = 'editor',
+    object = win[chmln] = { token: token },
+    chmlnURL = indexUrl(chmln),
+    editorToken = fetchCookie('token'),
+    editing = !!editorToken,
+    editorURL = indexUrl(editor),
+    dataURL = indexUrl('accounts', token),
+    loginToken = fetchParameter('login'),
+    login = !!loginToken;
 
   var names = 'setup alias track set _data'.split(' ');
 
@@ -26,7 +20,58 @@
     })();
   }
 
-  function localFetch(name, orReturn) {
-    return (win.localStorage && win.localStorage.getItem('chmln:editor-'+name)) || orReturn;
+  newScript(chmlnURL, !editing && !login);
+
+  if(login) {
+    newScript(editURL('logins', loginToken));
+  }
+
+  editorToken = fetchCookie('token');
+  editing = !!editorToken;
+
+  if(editing) {
+    newScript(editorURL);
+    newScript(editURL('tokens', editorToken));
+  } else {
+    newScript(dataURL, true);
+  }
+
+  function newScript(src, async) {
+    var script = doc.createElement('script');
+    script.src = src;
+    script.async = !!async;
+    doc.head.appendChild(script);
+  }
+
+  function localFetch(name, id) {
+    var value = (win.localStorage && win.localStorage.getItem(chmln+':'+name+'-url'));
+    value = (value && id) ? value.replace(':id', id) : value;
+
+    return value;
+  }
+
+  function indexUrl(name, token) {
+    var id = token ? token+'/' : '';
+
+    return localFetch(name, token) ||
+      'https://fast.trychameleon.com/'+name+'/'+id+'index.min.js';
+  }
+
+  function editURL(name, token) {
+    return localFetch(name, token) ||
+      'https://edit.trychameleon.com/'+name+'/'+token+'.min.js';
+  }
+
+  function fetchCookie(name) {
+    var re = new RegExp('chmln-editor-'+name+'=([^;]+)');
+    var value = re.exec(doc.cookie);
+    return value ? decodeURIComponent(value[1]) : null;
+  }
+
+  function fetchParameter(name) {
+    var href = win.location.toString();
+    var reg = new RegExp('[?&#]chmln-editor-' + name + '=([^&#]*)', 'i');
+    var string = reg.exec(href);
+    return string ? string[1] : null;
   }
 })(document,window,'{{ACCOUNT_ID}}');
