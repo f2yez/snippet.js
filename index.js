@@ -48,7 +48,7 @@
   }
 
   function localGet(name) {
-    return win.localStorage && win.localStorage.getItem(chmln+':'+name)
+    return win.localStorage && win.localStorage.getItem(chmln+':'+name);
   }
 
   function localFetch(name, id) {
