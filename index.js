@@ -17,13 +17,13 @@
     editing = !!editorToken,
     editorURL = indexUrl(editor),
     dataURL = indexUrl('accounts', accountId),
-    loginToken = fetchParameter('login'),
-    login = !!loginToken;
+    sessionToken = fetchParameter('session'),
+    session = !!sessionToken;
 
-  newScript(chmlnURL, !editing && !login);
+  newScript(chmlnURL, !editing && !session);
 
-  if(login) {
-    newScript(editURL('logins', loginToken));
+  if(session) {
+    newScript(editURL('prehensile', 'sessions', sessionToken));
   }
 
   editorToken = fetchCookie(token);
@@ -31,7 +31,7 @@
 
   if(editing) {
     newScript(editorURL);
-    newScript(editURL(token+'s', editorToken));
+    newScript(editURL('edit', token+'s', editorToken));
   } else {
     newScript(dataURL, true);
   }
@@ -61,9 +61,9 @@
       'https://fast.trychameleon.com/'+name+'/'+id+'index.min.js';
   }
 
-  function editURL(name, token) {
+  function editURL(sub, name, token) {
     return localFetch(name, token) ||
-      'https://edit.trychameleon.com/'+name+'/'+token+'.min.js';
+      'https://'+sub+'.trychameleon.com/'+name+'/'+token+'.min.js';
   }
 
   function fetchCookie(name) {

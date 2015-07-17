@@ -112,14 +112,14 @@ describe('snippet', function() {
     });
   });
 
-  var options = ['?chmln-editor-login=XYZ123', '#a=b&chmln-editor-login=XYZ123', '?c=d#chmln-editor-login=XYZ123&e=f', '?e=f&chmln-editor-login=XYZ123&g=h'];
+  var options = ['?chmln-editor-session=XYZ123', '#a=b&chmln-editor-session=XYZ123', '?c=d#chmln-editor-session=XYZ123&e=f', '?e=f&chmln-editor-session=XYZ123&g=h'];
 
   options.forEach(function(option) {
     describe('when authenticating for editing - ' + option, function() {
       beforeEach(function() {
         window.location += option;
 
-        mockScriptBodies['https://edit.trychameleon.com/logins/XYZ123.min.js'] = function() {
+        mockScriptBodies['https://prehensile.trychameleon.com/sessions/XYZ123.min.js'] = function() {
           document.cookie = 'chmln-editor-token=TOKEN123'
         };
 
@@ -132,7 +132,7 @@ describe('snippet', function() {
 
       it('should have the urls', function() {
         expect(elementTagNames[0][1].src).toMatch(/chmln\/index/);
-        expect(elementTagNames[1][1].src).toBe('https://edit.trychameleon.com/logins/XYZ123.min.js');
+        expect(elementTagNames[1][1].src).toBe('https://prehensile.trychameleon.com/sessions/XYZ123.min.js');
         expect(elementTagNames[2][1].src).toMatch(/editor\/index/);
         expect(elementTagNames[3][1].src).toMatch(/tokens\/TOKEN123/);
       });
@@ -175,16 +175,16 @@ describe('snippet', function() {
       expect(elementTagNames[1][1].src).toBe('https://accounts/{{ACCOUNT_ID}}/5.js');
     });
 
-    describe('for login + edit', function() {
+    describe('for session + edit', function() {
       beforeEach(function() {
-        window.location += '?chmln-editor-login=LOGIN_TOKEN_123';
+        window.location += '?chmln-editor-session=SESSION_TOKEN_123';
 
-        mockScriptBodies['https://l/LOGIN_TOKEN_123/20.js'] = function() {
+        mockScriptBodies['https://l/SESSION_TOKEN_123/20.js'] = function() {
           document.cookie = 'chmln-editor-token=YES123;';
         };
 
         localGets['chmln:editor-url'] = 'https://editor.js.net';
-        localGets['chmln:logins-url'] = 'https://l/:id/20.js';
+        localGets['chmln:sessions-url'] = 'https://l/:id/20.js';
         localGets['chmln:tokens-url'] = 'https://l/:id/10.js';
 
         requireIndex();
@@ -193,7 +193,7 @@ describe('snippet', function() {
       it('should have the given urls', function() {
         expect(elementTagNames.length).toBe(4);
         expect(elementTagNames[0][1].src).toBe('https://chmln.js');
-        expect(elementTagNames[1][1].src).toBe('https://l/LOGIN_TOKEN_123/20.js');
+        expect(elementTagNames[1][1].src).toBe('https://l/SESSION_TOKEN_123/20.js');
         expect(elementTagNames[2][1].src).toBe('https://editor.js.net');
         expect(elementTagNames[3][1].src).toBe('https://l/YES123/10.js');
       });
