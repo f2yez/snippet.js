@@ -1,5 +1,5 @@
 (function(doc,win,accountId) {
-  var chmln = 'chmln', editor = 'editor', token = 'token',
+  var chmln = 'chmln', editor = 'editor',
     object = win[chmln] = { token: accountId = (localGet(editor+'-account-id') || accountId)},
     names = 'setup alias track set _data'.split(' ');
 
@@ -13,8 +13,7 @@
   }
 
   var chmlnURL = indexUrl(chmln),
-    editorToken = fetchCookie(token),
-    editing = !!editorToken,
+    canEdit = !!fetchCookie('id'),
     editorURL = indexUrl(editor),
     dataURL = indexUrl('accounts', accountId),
     sessionRegex = /[?&#]chmln-editor-session=([^&#]*)/g,
@@ -24,18 +23,17 @@
   var url = win.location.toString().replace(sessionRegex, '');
   win.history && win.history.replaceState && win.history.replaceState(null, null, url);
 
-  newScript(chmlnURL, !editing && !session);
+  newScript(chmlnURL, !canEdit && !session);
 
   if(session) {
-    newScript(editURL('prehensile', 'sessions', sessionToken));
+    newScript(editURL('prehensile', 'login', sessionToken));
   }
 
-  editorToken = fetchCookie(token);
-  editing = !!editorToken;
+  canEdit = !!fetchCookie('id');
 
-  if(editing) {
+  if(canEdit) {
     newScript(editorURL);
-    newScript(editURL('edit', token+'s', editorToken));
+    newScript(editURL('edit', 'ecosystem'));
   } else {
     newScript(dataURL, true);
   }
@@ -66,19 +64,20 @@
   }
 
   function editURL(sub, name, token) {
+    var id = token ? '/'+token : '';
+
     return localFetch(name, token) ||
-      'https://'+sub+'.trychameleon.com/'+name+'/'+token+'.min.js';
+      'https://'+sub+'.trychameleon.com/'+name+id+'.min.js';
   }
 
   function fetchCookie(name) {
-    var re = new RegExp('chmln-editor-'+name+'=([^;]+)');
-    var value = re.exec(doc.cookie);
+    var editorRegex = new RegExp('chmln-user-'+name+'=([^;]+)');
+    var value = editorRegex.exec(doc.cookie);
     return value ? decodeURIComponent(value[1]) : null;
   }
 
   function fetchSessionToken() {
-    var href = win.location.toString();
-    var string = sessionRegex.exec(href);
+    var string = sessionRegex.exec(win.location.toString());
     return string ? string[1] : null;
   }
 })(document,window,'{{ACCOUNT_ID}}');

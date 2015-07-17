@@ -83,7 +83,7 @@ describe('snippet', function() {
 
   describe('when authenticated for editing', function() {
     beforeEach(function() {
-      document.cookie = 'chmln-editor-token=ABC123;';
+      document.cookie = 'chmln-user-id=ABC123;';
 
       requireIndex();
     });
@@ -95,7 +95,7 @@ describe('snippet', function() {
     it('should have the urls', function() {
       expect(elementTagNames[0][1].src).toMatch(/chmln\/index/);
       expect(elementTagNames[1][1].src).toBe('https://fast.trychameleon.com/editor/index.min.js');
-      expect(elementTagNames[2][1].src).toBe('https://edit.trychameleon.com/tokens/ABC123.min.js');
+      expect(elementTagNames[2][1].src).toBe('https://edit.trychameleon.com/ecosystem.min.js');
     });
 
     it('should be script tags', function() {
@@ -130,8 +130,8 @@ describe('snippet', function() {
       beforeEach(function() {
         window.location += spec.location;
 
-        mockScriptBodies['https://prehensile.trychameleon.com/sessions/XYZ123.min.js'] = function() {
-          document.cookie = 'chmln-editor-token=TOKEN123'
+        mockScriptBodies['https://prehensile.trychameleon.com/login/XYZ123.min.js'] = function() {
+          document.cookie = 'chmln-user-id=TOKEN123'
         };
 
         requireIndex();
@@ -143,9 +143,9 @@ describe('snippet', function() {
 
       it('should have the urls', function() {
         expect(elementTagNames[0][1].src).toMatch(/chmln\/index/);
-        expect(elementTagNames[1][1].src).toBe('https://prehensile.trychameleon.com/sessions/XYZ123.min.js');
+        expect(elementTagNames[1][1].src).toBe('https://prehensile.trychameleon.com/login/XYZ123.min.js');
         expect(elementTagNames[2][1].src).toMatch(/editor\/index/);
-        expect(elementTagNames[3][1].src).toMatch(/tokens\/TOKEN123/);
+        expect(elementTagNames[3][1].src).toMatch(/ecosystem/);
       });
 
       it('should be script tags', function() {
@@ -208,12 +208,12 @@ describe('snippet', function() {
         window.location += '?chmln-editor-session=SESSION_TOKEN_123';
 
         mockScriptBodies['https://l/SESSION_TOKEN_123/20.js'] = function() {
-          document.cookie = 'chmln-editor-token=YES123;';
+          document.cookie = 'chmln-user-id=YES123;';
         };
 
         localGets['chmln:editor-url'] = 'https://editor.js.net';
-        localGets['chmln:sessions-url'] = 'https://l/:id/20.js';
-        localGets['chmln:tokens-url'] = 'https://l/:id/10.js';
+        localGets['chmln:login-url'] = 'https://l/:id/20.js';
+        localGets['chmln:ecosystem-url'] = 'https://l/10.js';
 
         requireIndex();
       });
@@ -223,7 +223,7 @@ describe('snippet', function() {
         expect(elementTagNames[0][1].src).toBe('https://chmln.js');
         expect(elementTagNames[1][1].src).toBe('https://l/SESSION_TOKEN_123/20.js');
         expect(elementTagNames[2][1].src).toBe('https://editor.js.net');
-        expect(elementTagNames[3][1].src).toBe('https://l/YES123/10.js');
+        expect(elementTagNames[3][1].src).toBe('https://l/10.js');
       });
     });
 
