@@ -1,6 +1,6 @@
 (function(doc,win,accountId) {
   var chmln = 'chmln', editor = 'editor',
-    object = win[chmln] = { token: accountId = (localGet(editor+'-account-id') || accountId)},
+    object = win[chmln] = { token: accountId = (localGet(editor+'-account-id') || accountId) },
     names = 'setup alias track set _data'.split(' ');
 
   for(var i = 0; i<names.length; i++) {
