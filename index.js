@@ -17,8 +17,12 @@
     editing = !!editorToken,
     editorURL = indexUrl(editor),
     dataURL = indexUrl('accounts', accountId),
-    sessionToken = fetchParameter('session'),
+    sessionRegex = /[?&#]chmln-editor-session=([^&#]*)/g,
+    sessionToken = fetchSessionToken(),
     session = !!sessionToken;
+
+  var url = win.location.toString().replace(sessionRegex, '');
+  win.history && win.history.replaceState && win.history.replaceState(null, null, url);
 
   newScript(chmlnURL, !editing && !session);
 
@@ -72,10 +76,9 @@
     return value ? decodeURIComponent(value[1]) : null;
   }
 
-  function fetchParameter(name) {
+  function fetchSessionToken() {
     var href = win.location.toString();
-    var reg = new RegExp('[?&#]chmln-editor-' + name + '=([^&#]*)', 'i');
-    var string = reg.exec(href);
+    var string = sessionRegex.exec(href);
     return string ? string[1] : null;
   }
 })(document,window,'{{ACCOUNT_ID}}');

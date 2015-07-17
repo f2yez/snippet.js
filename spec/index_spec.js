@@ -1,7 +1,7 @@
 require('./helpers/spec_helper.js');
 
 describe('snippet', function() {
-  var elementTagNames, appendedChildren, localGetKeys, localGets, mockScriptBodies;
+  var elementTagNames, appendedChildren, replacedStates, localGetKeys, localGets, mockScriptBodies;
   var requireIndex = function() {
     delete require.cache[process.cwd()+'/index.js'];
 
@@ -11,6 +11,7 @@ describe('snippet', function() {
   beforeEach(function() {
     elementTagNames = [];
     appendedChildren = [];
+    replacedStates = [];
     localGetKeys = [];
     localGets = {};
     mockScriptBodies = {};
@@ -21,6 +22,11 @@ describe('snippet', function() {
         getItem: function(key) {
           localGetKeys.push(key);
           return localGets[key];
+        }
+      },
+      history: {
+        replaceState: function() {
+          replacedStates.push(Array.prototype.slice.call(arguments));
         }
       }
     };
@@ -112,12 +118,17 @@ describe('snippet', function() {
     });
   });
 
-  var options = ['?chmln-editor-session=XYZ123', '#a=b&chmln-editor-session=XYZ123', '?c=d#chmln-editor-session=XYZ123&e=f', '?e=f&chmln-editor-session=XYZ123&g=h'];
+  var specs = [
+    { location: '?chmln-editor-session=XYZ123',         url: 'https://yoursite.com' },
+    { location: '#a=b&chmln-editor-session=XYZ123',     url: 'https://yoursite.com#a=b' },
+    { location: '?c=d#chmln-editor-session=XYZ123&e=f', url: 'https://yoursite.com?c=d&e=f' },
+    { location: '?e=f&chmln-editor-session=XYZ123&g=h#w=x&chmln-editor-session=XYZ123&y=z', url: 'https://yoursite.com?e=f&g=h#w=x&y=z' }
+  ];
 
-  options.forEach(function(option) {
-    describe('when authenticating for editing - ' + option, function() {
+  specs.forEach(function(spec) {
+    describe('when authenticating for editing - ' + spec.url, function() {
       beforeEach(function() {
-        window.location += option;
+        window.location += spec.location;
 
         mockScriptBodies['https://prehensile.trychameleon.com/sessions/XYZ123.min.js'] = function() {
           document.cookie = 'chmln-editor-token=TOKEN123'
@@ -157,6 +168,23 @@ describe('snippet', function() {
         expect(appendedChildren[1]).toBe(elementTagNames[1][1]);
         expect(appendedChildren[2]).toBe(elementTagNames[2][1]);
         expect(appendedChildren[3]).toBe(elementTagNames[3][1]);
+      });
+
+      it('should replace the current state', function() {
+        expect(replacedStates.length).toBe(1);
+        expect(replacedStates[0]).toEqual([null, null, spec.url]);
+      });
+
+      describe('when push state is missing', function() {
+        beforeEach(function() {
+          window.history = null;
+
+          requireIndex();
+        });
+
+        it('should still add the scripts', function() {
+          expect(elementTagNames.length).toBe(8);
+        });
       });
     });
   });
