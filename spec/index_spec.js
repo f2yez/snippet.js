@@ -1,7 +1,7 @@
 require('./helpers/spec_helper.js');
 
 describe('snippet', function() {
-  var elementTagNames, appendedChildren, replacedStates, localGetKeys, localGets, mockScriptBodies;
+  var elementTagNames, appendedChildren, replacedStates, localGetKeys, localGets;
   var requireIndex = function() {
     delete require.cache[process.cwd()+'/index.js'];
 
@@ -14,7 +14,6 @@ describe('snippet', function() {
     replacedStates = [];
     localGetKeys = [];
     localGets = {};
-    mockScriptBodies = {};
 
     window = {
       location: 'https://yoursite.com',
@@ -41,10 +40,6 @@ describe('snippet', function() {
       head: {
         appendChild: function(child) {
           appendedChildren.push(child);
-
-          if(child.src && mockScriptBodies[child.src]) {
-            mockScriptBodies[child.src].call(global);
-          }
         }
       }
     };
@@ -130,10 +125,6 @@ describe('snippet', function() {
       beforeEach(function() {
         window.location += spec.location;
 
-        mockScriptBodies['https://prehensile.trychameleon.com/login/XYZ123.min.js'] = function() {
-          document.cookie = 'chmln-user-id=TOKEN123'
-        };
-
         requireIndex();
       });
 
@@ -206,10 +197,6 @@ describe('snippet', function() {
     describe('for session + edit', function() {
       beforeEach(function() {
         window.location += '?chmln-editor-session=SESSION_TOKEN_123';
-
-        mockScriptBodies['https://l/SESSION_TOKEN_123/20.js'] = function() {
-          document.cookie = 'chmln-user-id=YES123;';
-        };
 
         localGets['chmln:editor-url'] = 'https://editor.js.net';
         localGets['chmln:login-url'] = 'https://l/:id/20.js';

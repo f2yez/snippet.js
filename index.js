@@ -13,7 +13,7 @@
   }
 
   var chmlnURL = indexUrl(chmln),
-    canEdit = !!fetchCookie('id'),
+    shouldEdit = !!fetchCookie('id'),
     editorURL = indexUrl(editor),
     dataURL = indexUrl('accounts', accountId),
     sessionRegex = /[?&#]chmln-editor-session=([^&#]*)/g,
@@ -23,15 +23,14 @@
   var url = win.location.toString().replace(sessionRegex, '');
   win.history && win.history.replaceState && win.history.replaceState(null, null, url);
 
-  newScript(chmlnURL, !canEdit && !session);
+  newScript(chmlnURL, !shouldEdit && !session);
 
   if(session) {
+    shouldEdit = true;
     newScript(editURL('prehensile', 'login', sessionToken));
   }
 
-  canEdit = !!fetchCookie('id');
-
-  if(canEdit) {
+  if(shouldEdit) {
     newScript(editorURL);
     newScript(editURL('edit', 'ecosystem'));
   } else {
