@@ -18,12 +18,17 @@
     dataURL = indexUrl('accounts', accountId),
     sessionRegex = /[?&#]chmln-editor-session=([^&#]*)/g,
     sessionToken = fetchSessionToken(),
-    session = !!sessionToken;
+    session = !!sessionToken,
+    chmlnLoaded = false,
+    chmlnDataLoaded = false;
 
   var url = win.location.toString().replace(sessionRegex, '');
   win.history && win.history.replaceState && win.history.replaceState(null, null, url);
 
-  newScript(chmlnURL, !shouldEdit && !session);
+  newScript(chmlnURL, !shouldEdit && !session, function() {
+    chmlnLoaded = true;
+    tryChmlnStart();
+  });
 
   if(session) {
     shouldEdit = true;
@@ -34,13 +39,22 @@
     newScript(editorURL);
     newScript(editURL('edit', 'ecosystem'));
   } else {
-    newScript(dataURL, true);
+    newScript(dataURL, true, function() {
+      chmlnDataLoaded = true;
+      tryChmlnStart();
+    });
   }
 
-  function newScript(src, async) {
+  function newScript(src, async, onload) {
+    if(typeof async === 'function') {
+      onload = async;
+      async = false;
+    }
+
     var script = doc.createElement('script');
     script.src = src;
     script.async = !!async;
+    onload && (script.onload = onload);
     doc.head.appendChild(script);
   }
 
@@ -78,5 +92,11 @@
   function fetchSessionToken() {
     var string = sessionRegex.exec(win.location.toString());
     return string ? string[1] : null;
+  }
+
+  function tryChmlnStart() {
+    if(chmlnLoaded && chmlnDataLoaded) {
+      win.chmln.start();
+    }
   }
 })(document,window,'{{ACCOUNT_ID}}');

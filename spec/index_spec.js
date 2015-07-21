@@ -74,6 +74,29 @@ describe('snippet', function() {
       expect(appendedChildren[0]).toBe(elementTagNames[0][1]);
       expect(appendedChildren[1]).toBe(elementTagNames[1][1]);
     });
+
+    describe('when the chmln script has been downloaded', function() {
+      beforeEach(function() {
+        window.chmln.start = jasmine.createSpy('chmln.start');
+        window.Editor = { start: jasmine.createSpy('chmln.Editor.start') };
+
+        elementTagNames[0][1].onload.call(global);
+      });
+
+      it('should not start the script', function() {
+        expect(window.chmln.start).not.toHaveBeenCalled();
+      });
+
+      describe('when the account data script completes', function() {
+        beforeEach(function() {
+          elementTagNames[1][1].onload.call(global);
+        });
+
+        it('should start the script', function() {
+          expect(window.chmln.start).toHaveBeenCalled();
+        });
+      });
+    });
   });
 
   describe('when authenticated for editing', function() {
