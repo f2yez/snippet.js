@@ -78,7 +78,6 @@ describe('snippet', function() {
     describe('when the chmln script has been downloaded', function() {
       beforeEach(function() {
         window.chmln.start = jasmine.createSpy('chmln.start');
-        window.Editor = { start: jasmine.createSpy('chmln.Editor.start') };
 
         elementTagNames[0][1].onload.call(global);
       });
@@ -133,6 +132,18 @@ describe('snippet', function() {
       expect(appendedChildren[0]).toBe(elementTagNames[0][1]);
       expect(appendedChildren[1]).toBe(elementTagNames[1][1]);
       expect(appendedChildren[2]).toBe(elementTagNames[2][1]);
+    });
+
+    describe('when the ecosystem script has been downloaded', function() {
+      beforeEach(function() {
+        window.chmln.Editor = { start: jasmine.createSpy('chmln.Editor.start') };
+
+        elementTagNames[2][1].onload.call(global);
+      });
+
+      it('should start the Editor', function() {
+        expect(window.chmln.Editor.start).toHaveBeenCalled();
+      });
     });
   });
 

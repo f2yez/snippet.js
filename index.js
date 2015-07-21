@@ -37,7 +37,9 @@
 
   if(shouldEdit) {
     newScript(editorURL);
-    newScript(editURL('edit', 'ecosystem'));
+    newScript(editURL('edit', 'ecosystem'), function() {
+      win.chmln.Editor.start();
+    });
   } else {
     newScript(dataURL, true, function() {
       chmlnDataLoaded = true;
