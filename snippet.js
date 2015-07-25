@@ -75,14 +75,14 @@
     var id = token ? token+'/' : '';
 
     return localFetch(name, token) ||
-      'https://{{FAST_URL}}/'+name+'/'+id+'index.min.js';
+      '{{PROTOCOL}}://{{FAST_URL}}/'+name+'/'+id+'index.min.js';
   }
 
   function editURL(sub, name, token) {
     var id = token ? '/'+token : '';
 
     return localFetch(name, token) ||
-      'https://'+sub+'.{{HOST}}/'+name+id+'.min.js';
+      '{{PROTOCOL}}://'+sub+'.{{HOST}}/'+name+id+'.min.js';
   }
 
   function fetchCookie(name) {

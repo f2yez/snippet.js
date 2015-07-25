@@ -75,14 +75,14 @@
     var id = token ? token+'/' : '';
 
     return localFetch(name, token) ||
-      'https://localhost:3278/'+name+'/'+id+'index.min.js';
+      'http://localhost:3278/'+name+'/'+id+'index.min.js';
   }
 
   function editURL(sub, name, token) {
     var id = token ? '/'+token : '';
 
     return localFetch(name, token) ||
-      'https://'+sub+'.dev/'+name+id+'.min.js';
+      'http://'+sub+'.dev/'+name+id+'.min.js';
   }
 
   function fetchCookie(name) {
