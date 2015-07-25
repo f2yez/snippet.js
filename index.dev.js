@@ -82,7 +82,7 @@
     var id = token ? '/'+token : '';
 
     return localFetch(name, token) ||
-      'http://'+sub+'.dev/'+name+id+'.min.js';
+      'http://'+sub+'.trychameleon.dev/'+name+id+'.min.js';
   }
 
   function fetchCookie(name) {

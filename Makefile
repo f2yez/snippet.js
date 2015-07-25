@@ -4,10 +4,10 @@ build:
 	@node tasks/build
 
 indexify:
-	PROTOCOL=https FAST_URL=fast.trychameleon.com HOST=trychameleon.com TARGET_FILE=index.js $(MAKE) build
+	PROTOCOL=https FAST_URL=fast.trychameleon.com TLD=com TARGET_FILE=index.js $(MAKE) build
 
 devify:
-	PROTOCOL=http FAST_URL=localhost:3278 HOST=dev TARGET_FILE=index.dev.js $(MAKE) build
+	PROTOCOL=http FAST_URL=localhost:3278 TLD=dev TARGET_FILE=index.dev.js $(MAKE) build
 
 minify:
 	@uglifyjs index.js --compress --mangle --stats --output index.min.js
