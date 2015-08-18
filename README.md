@@ -11,7 +11,7 @@ Use it
 ------
 
 1. Copy index.min.js
-1. Replace `{{ACCOUNT_ID}}` with yours from the Chameleon dashboard.
+1. Replace `{{ACCOUNT_TOKEN}}` with yours from the Chameleon dashboard.
 1. Include it on all HTML pages (before the closing `</head>` tag)
 1. Include it *only* in production (even if you have a staging and/or test instances).
 1. For all private pages, call `chmln.setup(userProperties)`
@@ -40,3 +40,9 @@ Setup with email, plan and role properties:
 ```javascript
 chmln.setup({uid: user.id, created: user.createdAt, email: user.email, plan: 'gold', role: 'admin'});
 ```
+
+----------
+
+Footnote: http://eschooltoday.com/ecosystems/scales-of-an-ecosystem.html
+Micro: A small scale ecosystem such as a pond, puddle, tree trunk, under a rock etc.
+Messo: A medium scale ecosystem such as a forest or a large lake.

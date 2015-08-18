@@ -17,6 +17,7 @@
   "dependencies": {
   },
   "devDependencies": {
-    "minijasminenode2": "bnorton/minijasminenode"
+    "minijasminenode2": "bnorton/minijasminenode",
+    "aws-sdk": "2.x"
   }
 }
