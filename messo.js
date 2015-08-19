@@ -1,7 +1,7 @@
-(function(doc,win,object,habitatToken) {
+(function(doc,win,root,habitatToken) {
   var chmlnURL = buildURL('chmln/index'),
     editorURL = buildURL('editor/index'),
-    dataURL = buildURL('habitat/'+object.accountToken+'/'+habitatToken),
+    dataURL = buildURL('habitat/'+root.accountToken+'/'+habitatToken),
     sessionRegex = /[?&#]chmln-editor-session=([^&#]*)/g,
     sessionToken = fetchSessionToken(),
     shouldEdit = !!fetchCookie('id'),
@@ -14,6 +14,14 @@
 
   newScript(chmlnURL, !shouldEdit && !session, function() {
     chmlnLoaded = true;
+
+    var i, keys = Object.keys(root);
+    for(i=0; i<keys.length;i++) {
+      if(root.hasOwnProperty(keys[i])) {
+        win.chmln[keys[i]] = root[keys[i]];
+      }
+    }
+
     tryChmlnStart();
   });
 
@@ -25,7 +33,7 @@
   if(shouldEdit) {
     newScript(editorURL);
     newScript(buildURL('ecosystem'), function() {
-      object.Editor.start();
+      win.chmln.Editor.start();
     });
   } else {
     newScript(dataURL, true, function() {
@@ -66,7 +74,7 @@
 
   function tryChmlnStart() {
     if(chmlnLoaded && chmlnDataLoaded) {
-      object.start();
+      win.chmln.start();
     }
   }
-})(document,window,chmln,'{{HABITAT_TOKEN}}');
+})(document,window,window.chmln,'{{HABITAT_TOKEN}}');

@@ -2,7 +2,7 @@ require('./helpers/spec_helper.js');
 
 describe('messo', function() {
   var elementTagNames, appendedChildren, replacedStates;
-  var requireIndex = function() {
+  var requireMesso = function() {
     delete require.cache[process.cwd()+'/messo.js'];
 
     require('../messo.js');
@@ -37,13 +37,14 @@ describe('messo', function() {
     };
 
     chmln = window.chmln = {
-      accountToken: 'account-1124'
+      accountToken: 'account-1124',
+      foobar: function() {}
     };
   });
 
-  describe('script for chmln/index', function() {
+  describe('when including messo.js', function() {
     beforeEach(function() {
-      requireIndex();
+      requireMesso();
     });
 
     it('should add the scripts', function() {
@@ -73,6 +74,7 @@ describe('messo', function() {
 
     describe('when the chmln script has been downloaded', function() {
       beforeEach(function() {
+        window.chmln = { Editor: {}, other: 'foo' };
         window.chmln.start = jasmine.createSpy('chmln.start');
 
         elementTagNames[0].onload.call(global);
@@ -80,6 +82,14 @@ describe('messo', function() {
 
       it('should not start the script', function() {
         expect(window.chmln.start).not.toHaveBeenCalled();
+      });
+
+      it('should combine the original chmln attributes', function() {
+        expect(window.chmln.accountToken).toBe('account-1124');
+        expect(typeof window.chmln.foobar).toBe('function');
+
+        expect(window.chmln.Editor).toEqual({});
+        expect(window.chmln.other).toBe('foo');
       });
 
       describe('when the account data script completes', function() {
@@ -98,7 +108,7 @@ describe('messo', function() {
     beforeEach(function() {
       document.cookie = 'chmln-user-id=ABC123;';
 
-      requireIndex();
+      requireMesso();
     });
 
     it('should add the scripts', function() {
@@ -155,7 +165,7 @@ describe('messo', function() {
       beforeEach(function() {
         window.location += spec.location;
 
-        requireIndex();
+        requireMesso();
       });
 
       it('should add the scripts', function() {
@@ -200,7 +210,7 @@ describe('messo', function() {
         beforeEach(function() {
           window.history = null;
 
-          requireIndex();
+          requireMesso();
         });
 
         it('should still add the scripts', function() {
