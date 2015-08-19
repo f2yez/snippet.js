@@ -1,5 +1,8 @@
 var files = require('fs'),
-  path = require('path');
+  path = require('path'),
+  directory = process.cwd(),
+  accountToken = process.env.ACCOUNT_TOKEN,
+  habitatToken = process.env.HABITAT_TOKEN;
 
 if(!process.env.INPUT_FILE || !process.env.PROTOCOL || !process.env.FAST_URL || !process.env.TLD || !process.env.TARGET_FILE) {
   throw new Error('Expected to have a file, protocol, fast url, tld and target file (env.INPUT_FILE + env.PROTOCOL + env.FAST_URL + env.TLD + env.PROTOCOL + env.TARGET_FILE) but did not.');
@@ -16,7 +19,14 @@ string = string.replace(/\{\{TLD\}\}/g, process.env.TLD);
 string = string.replace(/\{\{PROTOCOL\}\}/g, process.env.PROTOCOL);
 
 // Required pre-processing for tasks/publish
-process.env.ACCOUNT_TOKEN && (string = string.replace(/\{\{ACCOUNT_TOKEN\}\}/g, process.env.ACCOUNT_TOKEN));
-process.env.HABITAT_TOKEN && (string = string.replace(/\{\{HABITAT_TOKEN\}\}/g, process.env.HABITAT_TOKEN));
+if(accountToken) {
+  string = string.replace(/\{\{ACCOUNT_TOKEN\}\}/g, accountToken);
+  files.writeFileSync(directory+'/.ACCOUNT_TOKEN', accountToken);
+}
+
+if(habitatToken) {
+  string = string.replace(/\{\{HABITAT_TOKEN\}\}/g, habitatToken);
+  files.writeFileSync(directory+'/.HABITAT_TOKEN', habitatToken);
+}
 
 files.writeFileSync(process.env.TARGET_FILE, string);

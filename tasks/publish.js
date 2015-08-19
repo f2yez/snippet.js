@@ -4,9 +4,13 @@
   //
 
   var startTime = new Date(),
+    files = require('fs'),
     directory = process.cwd(),
     accountToken = process.env.ACCOUNT_TOKEN,
     habitatToken = process.env.HABITAT_TOKEN;
+
+  try { accountToken || (accountToken = fs.readFileSync(directory+'/.ACCOUNT_TOKEN')) } catch(e) {}
+  try { habitatToken || (habitatToken = fs.readFileSync(directory+'/.HABITAT_TOKEN')) } catch(e) {}
 
   if(!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
     throw new Error('Configuration Error: An access key and secret are required for publishing to AWS');
@@ -24,7 +28,6 @@
 
   var AWS = require('aws-sdk'),
     s3bucket = new AWS.S3({ params: { Bucket: 'chmln-east' } }),
-    files = require('fs'),
     zlib = require('zlib'),
     body = zlib.gzipSync(files.readFileSync(directory+'/messo.min.js')),
     params = {
