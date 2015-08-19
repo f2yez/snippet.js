@@ -1,6 +1,6 @@
 (function(doc,win,accountToken) {
   var chmln = 'chmln',
-    names = 'setup identify alias track set show custom on off _data'.split(' '),
+    names = 'setup identify alias track set show on off custom help _data'.split(' '),
     src = 'http://localhost:3278/messo/'+accountToken+'/messo.min.js',
     localSrc = win.localStorage && win.localStorage.getItem(chmln+':messo-url');
 
