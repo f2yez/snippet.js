@@ -1,16 +1,15 @@
 (function(doc,win,object,habitatToken) {
-  var chmlnURL = indexUrl('chmln'),
-    shouldEdit = !!fetchCookie('id'),
-    editorURL = indexUrl('editor'),
-    habitatPath = 'habitat/'+object.accountToken+'/'+habitatToken,
-    dataURL = indexUrl(habitatPath, true),
+  var chmlnURL = buildURL('chmln/index'),
+    editorURL = buildURL('editor/index'),
+    dataURL = buildURL('habitat/'+object.accountToken+'/'+habitatToken),
     sessionRegex = /[?&#]chmln-editor-session=([^&#]*)/g,
     sessionToken = fetchSessionToken(),
+    shouldEdit = !!fetchCookie('id'),
     session = !!sessionToken,
     chmlnLoaded = false,
-    chmlnDataLoaded = false;
+    chmlnDataLoaded = false,
+    url = win.location.toString().replace(sessionRegex, '');
 
-  var url = win.location.toString().replace(sessionRegex, '');
   win.history && win.history.replaceState && win.history.replaceState(null, null, url);
 
   newScript(chmlnURL, !shouldEdit && !session, function() {
@@ -20,12 +19,12 @@
 
   if(session) {
     shouldEdit = true;
-    newScript(editURL('prehensile', 'login/'+sessionToken));
+    newScript(buildURL('login/'+sessionToken));
   }
 
   if(shouldEdit) {
     newScript(editorURL);
-    newScript(editURL('edit', 'ecosystem'), function() {
+    newScript(buildURL('ecosystem'), function() {
       object.Editor.start();
     });
   } else {
@@ -50,14 +49,8 @@
     doc.head.appendChild(script);
   }
 
-  function indexUrl(name, skipIndex) {
-    var index = skipIndex ? '' : '/index';
-
-    return '{{PROTOCOL}}://{{FAST_URL}}/'+name+index+'.min.js';
-  }
-
-  function editURL(sub, name) {
-    return '{{PROTOCOL}}://'+sub+'.trychameleon.{{TLD}}/'+name+'.min.js';
+  function buildURL(name) {
+    return '{{FAST_URL}}/'+name+'.min.js';
   }
 
   function fetchCookie(name) {
