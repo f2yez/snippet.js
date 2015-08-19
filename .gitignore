@@ -8,3 +8,5 @@ build
 
 *.log
 .ruby-version
+
+*.dev.js
