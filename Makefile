@@ -13,6 +13,7 @@ microify:
 
 devify:
 	INPUT_FILE=micro.js FAST_URL=http://localhost:3278 TARGET_FILE=index.dev.js $(MAKE) build
+	INPUT_FILE=messo.js FAST_URL=http://localhost:3278 TARGET_FILE=messo.dev.js $(MAKE) build
 
 minify:
 	@uglifyjs index.js --compress --mangle --stats --output index.min.js
