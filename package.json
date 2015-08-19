@@ -18,6 +18,8 @@
   },
   "devDependencies": {
     "minijasminenode2": "bnorton/minijasminenode",
+    "browserify": "*",
+    "uglify-js": "*",
     "aws-sdk": "2.x"
   }
 }
