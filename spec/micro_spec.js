@@ -50,7 +50,7 @@ describe('micro', function() {
     });
 
     it('should have the url', function() {
-      expect(elementTagNames[0].src).toBe('https://fast.trychameleon.com/messo/{{ACCOUNT_TOKEN}}/messo.min.js');
+      expect(elementTagNames[0].src).toMatch(/https:\/\/fast\.trychameleon\.com\/messo\/.+\/messo\.min\.js/);
     });
 
     it('should be asynchronous', function() {
@@ -84,7 +84,7 @@ describe('micro', function() {
         requireShort();
 
         expect(elementTagNames.length).toBe(1);
-        expect(elementTagNames[0].src).toBe('https://fast.trychameleon.com/messo/{{ACCOUNT_TOKEN}}/messo.min.js');
+        expect(elementTagNames[0].src).toMatch(/https:\/\/fast\.trychameleon\.com\/messo\/.+\/messo\.min\.js/);
       });
     });
   });
