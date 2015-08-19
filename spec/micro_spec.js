@@ -185,36 +185,6 @@ describe('micro', function() {
     });
   });
 
-  describe('.custom', function() {
-    beforeEach(function() {
-      requireShort();
-
-      window.chmln.custom('foo');
-      window.chmln.custom(1234);
-    });
-
-    it('should queue the requests', function() {
-      expect(window.chmln.custom_a.length).toBe(2);
-
-      expect(Array.prototype.slice.call(window.chmln.custom_a[0])).toEqual(['foo']);
-      expect(Array.prototype.slice.call(window.chmln.custom_a[1])).toEqual([1234]);
-    });
-  });
-
-  describe('._data', function() {
-    beforeEach(function() {
-      requireShort();
-
-      window.chmln._data({campaigns:[12,3], steps:[1]});
-    });
-
-    it('should queue the requests', function() {
-      expect(window.chmln._data_a.length).toBe(1);
-
-      expect(Array.prototype.slice.call(window.chmln._data_a[0])).toEqual([{campaigns:[12,3], steps:[1]}]);
-    });
-  });
-
   describe('.on', function() {
     var fooFN = function() { };
 
@@ -244,6 +214,52 @@ describe('micro', function() {
       expect(window.chmln.off_a.length).toBe(1);
 
       expect(Array.prototype.slice.call(window.chmln.off_a[0])).toEqual(['bar', barFN]);
+    });
+  });
+
+  describe('.custom', function() {
+    beforeEach(function() {
+      requireShort();
+
+      window.chmln.custom('foo');
+      window.chmln.custom(1234);
+    });
+
+    it('should queue the requests', function() {
+      expect(window.chmln.custom_a.length).toBe(2);
+
+      expect(Array.prototype.slice.call(window.chmln.custom_a[0])).toEqual(['foo']);
+      expect(Array.prototype.slice.call(window.chmln.custom_a[1])).toEqual([1234]);
+    });
+  });
+
+  describe('.help', function() {
+    beforeEach(function() {
+      requireShort();
+
+      window.chmln.help('me');
+      window.chmln.help('you');
+    });
+
+    it('should queue the requests', function() {
+      expect(window.chmln.help_a.length).toBe(2);
+
+      expect(Array.prototype.slice.call(window.chmln.help_a[0])).toEqual(['me']);
+      expect(Array.prototype.slice.call(window.chmln.help_a[1])).toEqual(['you']);
+    });
+  });
+
+  describe('._data', function() {
+    beforeEach(function() {
+      requireShort();
+
+      window.chmln._data({campaigns:[12,3], steps:[1]});
+    });
+
+    it('should queue the requests', function() {
+      expect(window.chmln._data_a.length).toBe(1);
+
+      expect(Array.prototype.slice.call(window.chmln._data_a[0])).toEqual([{campaigns:[12,3], steps:[1]}]);
     });
   });
 });
