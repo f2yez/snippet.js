@@ -14,10 +14,15 @@ if(string.indexOf('{{FAST_URL}}') === -1) {
   throw new Error('Expected to find {{FAST_URL}} in '+process.env.INPUT_FILE+' but did not.');
 }
 
+if(/messo/.test(process.env.INPUT_FILE) && string.indexOf('{{LOGIN_URL}}') === -1) {
+  throw new Error('Expected to find {{LOGIN_URL}} in '+process.env.INPUT_FILE+' but did not.');
+}
+
 //
 // Required pre-processing for tasks/publish
 //
 string = string.replace(/\{\{FAST_URL\}\}/g, process.env.FAST_URL);
+string = string.replace(/\{\{LOGIN_URL\}\}/g, process.env.LOGIN_URL);
 
 if(accountToken) {
   string = string.replace(/\{\{ACCOUNT_TOKEN\}\}/g, accountToken);

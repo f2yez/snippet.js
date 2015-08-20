@@ -174,7 +174,7 @@ describe('messo', function() {
 
       it('should have the urls', function() {
         expect(elementTagNames[0].src).toMatch(/chmln\/index/);
-        expect(elementTagNames[1].src).toBe('{{FAST_URL}}/login/XYZ123.min.js');
+        expect(elementTagNames[1].src).toBe('{{LOGIN_URL}}/login/XYZ123.min.js');
         expect(elementTagNames[2].src).toMatch(/editor\/index/);
         expect(elementTagNames[3].src).toMatch(/ecosystem/);
       });

@@ -28,7 +28,7 @@
 
   if(session) {
     shouldEdit = true;
-    newScript(buildURL('login/'+sessionToken));
+    newScript('{{LOGIN_URL}}/login/'+sessionToken+'.min.js');
   }
 
   if(shouldEdit) {

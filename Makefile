@@ -4,7 +4,7 @@ build:
 	@node tasks/build
 
 messoify:
-	INPUT_FILE=messo.js FAST_URL=https://fast.trychameleon.com TARGET_FILE=messo.tmp.js $(MAKE) build
+	INPUT_FILE=messo.js FAST_URL=https://fast.trychameleon.com LOGIN_URL=https://prehensile.trychameleon.com TARGET_FILE=messo.tmp.js $(MAKE) build
 	./node_modules/uglify-js/bin/uglifyjs messo.tmp.js --compress --mangle --stats --output messo.min.js
 	rm messo.tmp.js
 
@@ -13,7 +13,7 @@ microify:
 
 devify:
 	INPUT_FILE=micro.js FAST_URL=http://localhost:3278 TARGET_FILE=index.dev.js $(MAKE) build
-	INPUT_FILE=messo.js FAST_URL=http://localhost:3278 TARGET_FILE=messo.dev.js $(MAKE) build
+	INPUT_FILE=messo.js FAST_URL=http://localhost:3278 LOGIN_URL=http://prehensile.trychameleon.dev TARGET_FILE=messo.dev.js $(MAKE) build
 
 minify:
 	./node_modules/uglify-js/bin/uglifyjs index.js --compress --mangle --stats --output index.min.js
