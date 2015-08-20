@@ -109,6 +109,7 @@ describe('messo', function() {
       document.cookie = 'chmln-user-id=ABC123;';
 
       requireMesso();
+      elementTagNames[0].onload.call(global);
     });
 
     it('should add the scripts', function() {
@@ -117,8 +118,8 @@ describe('messo', function() {
 
     it('should have the urls', function() {
       expect(elementTagNames[0].src).toMatch(/chmln\/index/);
-      expect(elementTagNames[1].src).toBe('{{FAST_URL}}/editor/index.min.js');
-      expect(elementTagNames[2].src).toBe('{{FAST_URL}}/account-1124/ecosystem.min.js');
+      expect(elementTagNames[1].src).toBe('{{FAST_URL}}/account-1124/ecosystem.min.js');
+      expect(elementTagNames[2].src).toBe('{{FAST_URL}}/editor/index.min.js');
     });
 
     it('should be script tags', function() {
@@ -127,10 +128,10 @@ describe('messo', function() {
       expect(elementTagNames[2].__tagName).toBe('script');
     });
 
-    it('should be synchronous', function() {
-      expect(elementTagNames[0].async).toBeUndefined();
-      expect(elementTagNames[1].async).toBeUndefined();
-      expect(elementTagNames[2].async).toBeUndefined();
+    it('should be asynchronous', function() {
+      expect(elementTagNames[0].async).toBe(true);
+      expect(elementTagNames[1].async).toBe(true);
+      expect(elementTagNames[2].async).toBe(true);
     });
 
     it('should append the scripts to the head', function() {
@@ -140,10 +141,11 @@ describe('messo', function() {
       expect(appendedChildren[2]).toBe(elementTagNames[2]);
     });
 
-    describe('when the ecosystem script has been downloaded', function() {
+    describe('when the scripts have been downloaded', function() {
       beforeEach(function() {
         window.chmln.Editor = { start: jasmine.createSpy('chmln.Editor.start') };
 
+        elementTagNames[1].onload.call(global);
         elementTagNames[2].onload.call(global);
       });
 
@@ -166,6 +168,8 @@ describe('messo', function() {
         window.location += spec.location;
 
         requireMesso();
+        elementTagNames[0].onload.call(global);
+        elementTagNames[1].onload.call(global);
       });
 
       it('should add the scripts', function() {
@@ -173,10 +177,10 @@ describe('messo', function() {
       });
 
       it('should have the urls', function() {
-        expect(elementTagNames[0].src).toMatch(/chmln\/index/);
-        expect(elementTagNames[1].src).toBe('{{LOGIN_URL}}/login/XYZ123.min.js');
-        expect(elementTagNames[2].src).toMatch(/editor\/index/);
-        expect(elementTagNames[3].src).toMatch(/ecosystem/);
+        expect(elementTagNames[0].src).toBe('{{LOGIN_URL}}/login/XYZ123.min.js');
+        expect(elementTagNames[1].src).toMatch(/chmln\/index/);
+        expect(elementTagNames[2].src).toMatch(/ecosystem/);
+        expect(elementTagNames[3].src).toMatch(/editor\/index/);
       });
 
       it('should be script tags', function() {
@@ -186,11 +190,11 @@ describe('messo', function() {
         expect(elementTagNames[3].__tagName).toBe('script');
       });
 
-      it('should be synchronous', function() {
-        expect(elementTagNames[0].async).toBeUndefined();
-        expect(elementTagNames[1].async).toBeUndefined();
-        expect(elementTagNames[2].async).toBeUndefined();
-        expect(elementTagNames[3].async).toBeUndefined();
+      it('should be asynchronous', function() {
+        expect(elementTagNames[0].async).toBe(true);
+        expect(elementTagNames[1].async).toBe(true);
+        expect(elementTagNames[2].async).toBe(true);
+        expect(elementTagNames[3].async).toBe(true);
       });
 
       it('should append the scripts to the head', function() {
@@ -211,6 +215,8 @@ describe('messo', function() {
           window.history = null;
 
           requireMesso();
+          elementTagNames[4].onload.call(global);
+          elementTagNames[5].onload.call(global);
         });
 
         it('should still add the scripts', function() {

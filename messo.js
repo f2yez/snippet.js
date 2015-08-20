@@ -9,51 +9,61 @@
     session = !!sessionToken,
     chmlnLoaded = false,
     chmlnDataLoaded = false,
+    editorLoaded = false,
+    editorDataLoaded = false,
     url = win.location.toString().replace(sessionRegex, '');
 
   win.history && win.history.replaceState && win.history.replaceState(null, null, url);
 
-  newScript(chmlnURL, !shouldEdit && !session, function() {
-    chmlnLoaded = true;
+  function loadChmlnAndEdit() {
+    newScript(chmlnURL, function() {
+      chmlnLoaded = true;
 
-    var i, keys = Object.keys(root);
-    for(i=0; i<keys.length;i++) {
-      if(root.hasOwnProperty(keys[i])) {
-        win.chmln[keys[i]] = root[keys[i]];
+      var i, keys = Object.keys(root);
+      for(i=0; i<keys.length;i++) {
+        if(root.hasOwnProperty(keys[i])) {
+          win.chmln[keys[i]] = root[keys[i]];
+        }
       }
-    }
 
-    tryChmlnStart();
-  });
+      if(shouldEdit) {
+        newScript(editorURL, function() {
+          editorLoaded = true;
+          tryEditorStart();
+        });
+      } else {
+        tryChmlnStart();
+      }
+    });
+
+    if(shouldEdit) {
+      newScript(ecosystemURL, function() {
+        editorDataLoaded = true;
+        tryEditorStart();
+      });
+    }
+  }
 
   if(session) {
     shouldEdit = true;
-    newScript('{{LOGIN_URL}}/login/'+sessionToken+'.min.js');
-  }
-
-  if(shouldEdit) {
-    newScript(editorURL);
-    newScript(ecosystemURL, function() {
-      win.chmln.Editor.start();
+    newScript('{{LOGIN_URL}}/login/'+sessionToken+'.min.js', function() {
+      loadChmlnAndEdit();
     });
+  } else if(shouldEdit) {
+    loadChmlnAndEdit();
   } else {
-    newScript(habitatURL, true, function() {
+    loadChmlnAndEdit();
+    newScript(habitatURL, function() {
       chmlnDataLoaded = true;
       tryChmlnStart();
     });
   }
 
-  function newScript(src, async, onload) {
-    if(typeof async === 'function') {
-      onload = async;
-      async = false;
-    }
-
+  function newScript(src, onload) {
     var script = doc.createElement('script');
     script.src = src;
-
-    async  && (script.async = true);
-    onload && (script.onload = onload);
+    script.async = true;
+    script.onload = onload;
 
     doc.head.appendChild(script);
   }
@@ -76,6 +86,12 @@
   function tryChmlnStart() {
     if(chmlnLoaded && chmlnDataLoaded) {
       win.chmln.start();
+    }
+  }
+
+  function tryEditorStart() {
+    if(chmlnLoaded && editorLoaded && editorDataLoaded) {
+      win.chmln.Editor.start();
     }
   }
 })(document,window,window.chmln,'{{HABITAT_TOKEN}}');
