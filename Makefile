@@ -5,7 +5,7 @@ build:
 
 messoify:
 	INPUT_FILE=messo.js FAST_URL=https://fast.trychameleon.com TARGET_FILE=messo.tmp.js $(MAKE) build
-	@uglifyjs messo.tmp.js --compress --mangle --stats --output messo.min.js
+	./node_modules/uglify-js/bin/uglifyjs messo.tmp.js --compress --mangle --stats --output messo.min.js
 	rm messo.tmp.js
 
 microify:
@@ -16,7 +16,7 @@ devify:
 	INPUT_FILE=messo.js FAST_URL=http://localhost:3278 TARGET_FILE=messo.dev.js $(MAKE) build
 
 minify:
-	@uglifyjs index.js --compress --mangle --stats --output index.min.js
+	./node_modules/uglify-js/bin/uglifyjs index.js --compress --mangle --stats --output index.min.js
 
 release: messoify publish clean
 

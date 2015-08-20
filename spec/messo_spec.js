@@ -58,7 +58,7 @@ describe('messo', function() {
 
     it('should have the urls', function() {
       expect(elementTagNames[0].src).toBe('{{FAST_URL}}/chmln/index.min.js');
-      expect(elementTagNames[1].src).toBe('{{FAST_URL}}/habitat/account-1124/{{HABITAT_TOKEN}}.min.js');
+      expect(elementTagNames[1].src).toBe('{{FAST_URL}}/account-1124/{{HABITAT_TOKEN}}/habitat.min.js');
     });
 
     it('should be async', function() {
@@ -118,7 +118,7 @@ describe('messo', function() {
     it('should have the urls', function() {
       expect(elementTagNames[0].src).toMatch(/chmln\/index/);
       expect(elementTagNames[1].src).toBe('{{FAST_URL}}/editor/index.min.js');
-      expect(elementTagNames[2].src).toBe('{{FAST_URL}}/ecosystem.min.js');
+      expect(elementTagNames[2].src).toBe('{{FAST_URL}}/account-1124/ecosystem.min.js');
     });
 
     it('should be script tags', function() {

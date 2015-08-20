@@ -1,7 +1,8 @@
 (function(doc,win,root,habitatToken) {
   var chmlnURL = buildURL('chmln/index'),
     editorURL = buildURL('editor/index'),
-    dataURL = buildURL('habitat/'+root.accountToken+'/'+habitatToken),
+    ecosystemURL = buildURL(root.accountToken+'/ecosystem'),
+    habitatURL = buildURL(root.accountToken+'/'+habitatToken+'/habitat'),
     sessionRegex = /[?&#]chmln-editor-session=([^&#]*)/g,
     sessionToken = fetchSessionToken(),
     shouldEdit = !!fetchCookie('id'),
@@ -32,11 +33,11 @@
 
   if(shouldEdit) {
     newScript(editorURL);
-    newScript(buildURL('ecosystem'), function() {
+    newScript(ecosystemURL, function() {
       win.chmln.Editor.start();
     });
   } else {
-    newScript(dataURL, true, function() {
+    newScript(habitatURL, true, function() {
       chmlnDataLoaded = true;
       tryChmlnStart();
     });
