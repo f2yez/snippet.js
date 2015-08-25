@@ -38,6 +38,7 @@ describe('messo', function() {
 
     chmln = window.chmln = {
       accountToken: 'account-1124',
+      start: function() {},
       foobar: function() {}
     };
   });
@@ -74,14 +75,16 @@ describe('messo', function() {
 
     describe('when the chmln script has been downloaded', function() {
       beforeEach(function() {
+        delete window.chmln.start;
+
         window.chmln = { Editor: {}, other: 'foo' };
         window.chmln.start = jasmine.createSpy('chmln.start');
 
         elementTagNames[0].onload.call(global);
       });
 
-      it('should not start the script', function() {
-        expect(window.chmln.start).not.toHaveBeenCalled();
+      it('should start the script', function() {
+        expect(window.chmln.start).toHaveBeenCalled();
       });
 
       it('should combine the original chmln attributes', function() {
@@ -90,16 +93,6 @@ describe('messo', function() {
 
         expect(window.chmln.Editor).toEqual({});
         expect(window.chmln.other).toBe('foo');
-      });
-
-      describe('when the account data script completes', function() {
-        beforeEach(function() {
-          elementTagNames[1].onload.call(global);
-        });
-
-        it('should start the script', function() {
-          expect(window.chmln.start).toHaveBeenCalled();
-        });
       });
     });
   });

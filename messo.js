@@ -84,7 +84,7 @@
   }
 
   function tryChmlnStart() {
-    if(chmlnLoaded && chmlnDataLoaded) {
+    if(chmlnLoaded) {
       win.chmln.start();
     }
   }
