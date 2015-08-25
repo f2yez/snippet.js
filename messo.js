@@ -31,9 +31,9 @@
           editorLoaded = true;
           tryEditorStart();
         });
-      } else {
-        tryChmlnStart();
       }
+
+      tryChmlnStart();
     });
 
     if(shouldEdit) {

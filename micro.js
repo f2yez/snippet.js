@@ -16,6 +16,8 @@
     })();
   }
 
+  // TODO we need a way to trigger a refresh of ALL account's messo.min.js file when the code structure of messo.min.js changes
+
   var script = doc.createElement('script');
   script.src = localSrc || src;
   script.async = true;
