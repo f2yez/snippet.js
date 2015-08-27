@@ -39,6 +39,7 @@ describe('messo', function() {
     chmln = window.chmln = {
       accountToken: 'account-1124',
       start: function() {},
+      covered: 'you',
       foobar: function() {}
     };
   });
@@ -77,7 +78,7 @@ describe('messo', function() {
       beforeEach(function() {
         delete window.chmln.start;
 
-        window.chmln = { Editor: {}, other: 'foo' };
+        window.chmln = { Editor: {}, other: 'foo', covered: 'me' };
         window.chmln.start = jasmine.createSpy('chmln.start');
 
         elementTagNames[0].onload.call(global);
@@ -93,6 +94,7 @@ describe('messo', function() {
 
         expect(window.chmln.Editor).toEqual({});
         expect(window.chmln.other).toBe('foo');
+        expect(window.chmln.covered).toBe('me');
       });
     });
   });

@@ -21,7 +21,7 @@
 
       var i, keys = Object.keys(root);
       for(i=0; i<keys.length;i++) {
-        if(root.hasOwnProperty(keys[i])) {
+        if(root.hasOwnProperty(keys[i]) && !win.chmln[keys[i]]) {
           win.chmln[keys[i]] = root[keys[i]];
         }
       }
