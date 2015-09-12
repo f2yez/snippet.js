@@ -74,11 +74,15 @@ describe('messo', function() {
       expect(appendedChildren[1]).toBe(elementTagNames[1]);
     });
 
+    it('should not be editing', function() {
+      expect(chmln.isEditing).toBe(false);
+    });
+
     describe('when the chmln script has been downloaded', function() {
       beforeEach(function() {
         delete window.chmln.start;
 
-        window.chmln = { Editor: {}, other: 'foo', covered: 'me' };
+        window.chmln = { Editor: { hi: 'a' }, other: 'foo', covered: 'me' };
         window.chmln.start = jasmine.createSpy('chmln.start');
 
         elementTagNames[0].onload.call(global);
@@ -92,7 +96,7 @@ describe('messo', function() {
         expect(window.chmln.accountToken).toBe('account-1124');
         expect(typeof window.chmln.foobar).toBe('function');
 
-        expect(window.chmln.Editor).toEqual({});
+        expect(window.chmln.Editor).toEqual({ hi: 'a' });
         expect(window.chmln.other).toBe('foo');
         expect(window.chmln.covered).toBe('me');
       });
@@ -134,6 +138,10 @@ describe('messo', function() {
       expect(appendedChildren[0]).toBe(elementTagNames[0]);
       expect(appendedChildren[1]).toBe(elementTagNames[1]);
       expect(appendedChildren[2]).toBe(elementTagNames[2]);
+    });
+
+    it('should be editing', function() {
+      expect(chmln.isEditing).toBe(true);
     });
 
     describe('when the scripts have been downloaded', function() {

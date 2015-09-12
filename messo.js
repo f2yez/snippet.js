@@ -5,7 +5,7 @@
     habitatURL = buildURL(root.accountToken+'/'+habitatToken+'/habitat'),
     sessionRegex = /[?&#]chmln-editor-session=([^&#]*)/g,
     sessionToken = fetchSessionToken(),
-    shouldEdit = !!fetchCookie('id'),
+    shouldEdit = win.chmln.isEditing = !!fetchCookie('id'),
     session = !!sessionToken,
     chmlnLoaded = false,
     chmlnDataLoaded = false,
