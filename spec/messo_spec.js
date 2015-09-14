@@ -105,7 +105,7 @@ describe('messo', function() {
 
   describe('when authenticated for editing', function() {
     beforeEach(function() {
-      document.cookie = 'chmln-user-id=ABC123;';
+      document.cookie = 'chmln-user-admin=foo;';
 
       requireMesso();
       elementTagNames[0].onload.call(global);
