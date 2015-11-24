@@ -4,6 +4,7 @@
     ecosystemURL = buildURL(root.accountToken+'/ecosystem'),
     habitatURL = buildURL(root.accountToken+'/'+habitatToken+'/habitat'),
     sessionRegex = /[?&#]chmln-editor-session=([^&#]*)/g,
+    location = win.chmln.location || win.location.toString(),
     sessionToken = fetchSessionToken(),
     shouldEdit = win.chmln.isEditing = !!fetchCookie('admin'),
     session = !!sessionToken,
@@ -11,7 +12,7 @@
     chmlnDataLoaded = false,
     editorLoaded = false,
     editorDataLoaded = false,
-    url = win.chmln.location.replace(sessionRegex, '');
+    url = location.replace(sessionRegex, '');
 
   win.history && win.history.replaceState && win.history.replaceState(null, null, url);
 
@@ -79,7 +80,7 @@
   }
 
   function fetchSessionToken() {
-    var string = sessionRegex.exec(win.chmln.location);
+    var string = sessionRegex.exec(location);
     return string ? string[1] : null;
   }
 
