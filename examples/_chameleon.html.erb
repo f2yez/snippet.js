@@ -3,7 +3,7 @@
   // Assuming you have exposed `helper_method :current_user` in your `ApplicationController`
 
   <% if current_user.present? %>
-    chmln.setup({
+    chmln.identify({
       uid: '<%= current_user.id %>',
       created: '<%= current_user.created_at.iso8601 %>',
       email: '<%= current_user.email %>',

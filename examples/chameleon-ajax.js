@@ -3,7 +3,7 @@
 
 (function() {
   var currentUserLoaded = function(currentUser) {
-    chmln.setup({
+    chmln.identify({
       uid: currentUser.id,
       created: currentUser.createdAt,
       email: currentUser.email,

@@ -3,7 +3,7 @@
 
 (function() {
   if(currentUser.id) {
-    chmln.setup({
+    chmln.identify({
       uid: currentUser.id,
       created: currentUser.createdAt,
       email: currentUser.email,
