@@ -11,7 +11,7 @@
     chmlnDataLoaded = false,
     editorLoaded = false,
     editorDataLoaded = false,
-    url = win.location.toString().replace(sessionRegex, '');
+    url = win.chmln.location.replace(sessionRegex, '');
 
   win.history && win.history.replaceState && win.history.replaceState(null, null, url);
 
@@ -79,7 +79,7 @@
   }
 
   function fetchSessionToken() {
-    var string = sessionRegex.exec(win.location.toString());
+    var string = sessionRegex.exec(win.chmln.location);
     return string ? string[1] : null;
   }
 

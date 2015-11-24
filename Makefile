@@ -9,7 +9,7 @@ messoify:
 	rm messo.tmp.js
 
 microify:
-	INPUT_FILE=micro.js FAST_URL=https://fast.trychameleon.com TARGET_FILE=index.js $(MAKE) build
+	INPUT_FILE=micro.js FAST_URL=https://fast.trychameleon.com ACCOUNT_TOKEN=account-1845 TARGET_FILE=index.js $(MAKE) build
 
 devify:
 	INPUT_FILE=micro.js FAST_URL=http://localhost:3278 TARGET_FILE=index.dev.js $(MAKE) build

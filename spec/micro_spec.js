@@ -6,12 +6,16 @@ describe('micro', function() {
     delete require.cache[process.cwd()+'/index.js'];
 
     require('../index.js');
+
+    chmln = window.chmln;
   };
 
   beforeEach(function() {
     elementTagNames = [];
     appendedChildren = [];
     localGets = {};
+
+    delete global.chmln;
 
     window = {
       location: 'https://yoursite.com',
@@ -39,6 +43,14 @@ describe('micro', function() {
   describe('script for short', function() {
     beforeEach(function() {
       requireShort();
+    });
+
+    it('should have the account token', function() {
+      expect(chmln.accountToken).toBe('account-1845');
+    });
+
+    it('should have the window location', function() {
+      expect(chmln.location).toBe('https://yoursite.com');
     });
 
     it('should add the script', function() {

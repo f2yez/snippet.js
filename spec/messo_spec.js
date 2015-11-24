@@ -14,7 +14,6 @@ describe('messo', function() {
     replacedStates = [];
 
     window = {
-      location: 'https://yoursite.com',
       history: {
         replaceState: function() {
           replacedStates.push(Array.prototype.slice.call(arguments));
@@ -38,6 +37,7 @@ describe('messo', function() {
 
     chmln = window.chmln = {
       accountToken: 'account-1124',
+      location: 'https://yoursite.com',
       start: function() {},
       covered: 'you',
       foobar: function() {}
@@ -168,7 +168,7 @@ describe('messo', function() {
   specs.forEach(function(spec) {
     describe('when authenticating for editing - ' + spec.url, function() {
       beforeEach(function() {
-        window.location += spec.location;
+        chmln.location += spec.location;
 
         requireMesso();
         elementTagNames[0].onload.call(global);
