@@ -35,11 +35,8 @@
       ContentEncoding: 'gzip',
       Key: 'messo/'+accountToken+'/messo.min.js',
       Body: body,
-      CacheControl: 'public, max-age=1440, no-cache',
-      /* ETag: 'Added by S3' */
+      CacheControl: 'public, max-age=120, must-revalidate'
     };
-
-  /* Cache for one hour; Revalidate first with the ETag - From: https://surge.sh/help/using-lucid-caching-automatically */
 
   console.log('Gzipped to: '+Buffer.byteLength(body.toString())/1024+'KB');
 
