@@ -158,6 +158,62 @@ describe('messo', function() {
     });
   });
 
+  describe('when entering preview mode', function() {
+    var Preview;
+
+    beforeEach(function() {
+      window.opener = { chmln: { Editor: { lib: { Preview: (Preview = jasmine.createSpyObj('Preview', ['start'])) }}}};
+      Preview.decorator = jasmine.createSpy('CampaignDecorator');
+    });
+
+    it('should not assign the preview', function() {
+      requireMesso();
+
+      expect(chmln.Preview).toBeUndefined();
+    });
+
+    it('should download the normal scripts', function() {
+      requireMesso();
+
+      expect(elementTagNames.length).toBe(2);
+    });
+
+    describe('when editing', function() {
+      beforeEach(function() {
+        document.cookie = 'chmln-user-admin=foo;';
+
+        requireMesso();
+      });
+
+      it('should add the chmln script only', function() {
+        expect(elementTagNames.length).toBe(1);
+        expect(elementTagNames[0].__tagName).toBe('script');
+        expect(elementTagNames[0].src).toBe('{{FAST_URL}}/chmln/index.min.js');
+        expect(elementTagNames[0].async).toBe(true);
+      });
+
+      describe('when the chmln script is loaded', function() {
+        beforeEach(function() {
+          window.chmln.start = jasmine.createSpy('chmln.start');
+
+          elementTagNames[0].onload.call(global);
+        });
+
+        it('should start it script', function() {
+          expect(window.chmln.start).toHaveBeenCalled();
+        });
+
+        it('should assign the preview', function() {
+          expect(chmln.Preview).toBe(Preview);
+        });
+
+        it('should start the Preview', function() {
+          expect(Preview.start).toHaveBeenCalled();
+        });
+      });
+    });
+  });
+
   var specs = [
     { location: '?chmln-editor-session=XYZ123',         url: 'https://yoursite.com' },
     { location: '#a=b&chmln-editor-session=XYZ123',     url: 'https://yoursite.com#a=b' },

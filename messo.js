@@ -6,7 +6,11 @@
     sessionRegex = /[?&#]chmln-editor-session=([^&#]*)/g,
     location = win.chmln.location || win.location.toString(),
     sessionToken = fetchSessionToken(),
-    shouldEdit = win.chmln.isEditing = !!fetchCookie('admin'),
+    adminCookie = !!fetchCookie('admin'),
+    opener = window.opener,
+    Preview = adminCookie && opener && opener.chmln && opener.chmln.Editor.lib.Preview,
+    shouldPreview = !!(Preview && Preview.decorator),
+    shouldEdit = (win.chmln.isEditing = adminCookie) && !shouldPreview,
     session = !!sessionToken,
     chmlnLoaded = false,
     chmlnDataLoaded = false,
@@ -54,7 +58,7 @@
     loadChmlnAndEdit();
   } else {
     loadChmlnAndEdit();
-    newScript(habitatURL, function() {
+    shouldPreview || newScript(habitatURL, function() {
       chmlnDataLoaded = true;
       tryChmlnStart();
     });
@@ -85,9 +89,8 @@
   }
 
   function tryChmlnStart() {
-    if(chmlnLoaded) {
-      win.chmln.start();
-    }
+    chmlnLoaded && win.chmln.start();
+    shouldPreview && (chmln.Preview = Preview).start();
   }
 
   function tryEditorStart() {
