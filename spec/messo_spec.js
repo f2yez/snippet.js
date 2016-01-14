@@ -144,6 +144,10 @@ describe('messo', function() {
       expect(chmln.isEditing).toBe(true);
     });
 
+    it('should not be previewing', function() {
+      expect(chmln.isPreviewing).toBe(false);
+    });
+
     describe('when the scripts have been downloaded', function() {
       beforeEach(function() {
         window.chmln.Editor = { start: jasmine.createSpy('chmln.Editor.start') };
@@ -163,7 +167,7 @@ describe('messo', function() {
 
     beforeEach(function() {
       window.opener = { chmln: { Editor: { lib: { Preview: (Preview = jasmine.createSpyObj('Preview', ['start'])) }}}};
-      Preview.decorator = jasmine.createSpy('CampaignDecorator');
+      Preview.window = jasmine.createSpy('Preview:window');
     });
 
     it('should not assign the preview', function() {
@@ -178,11 +182,26 @@ describe('messo', function() {
       expect(elementTagNames.length).toBe(2);
     });
 
+    it('should not be editing or previewing', function() {
+      requireMesso();
+
+      expect(chmln.isEditing).toBe(false);
+      expect(chmln.isPreviewing).toBe(false);
+    });
+
     describe('when editing', function() {
       beforeEach(function() {
         document.cookie = 'chmln-user-admin=foo;';
 
         requireMesso();
+      });
+
+      it('should be editing', function() {
+        expect(chmln.isEditing).toBe(true);
+      });
+
+      it('should be previewing', function() {
+        expect(chmln.isPreviewing).toBe(true);
       });
 
       it('should add the chmln script only', function() {

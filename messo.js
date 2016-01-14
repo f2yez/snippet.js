@@ -9,7 +9,7 @@
     adminCookie = !!fetchCookie('admin'),
     opener = window.opener,
     Preview = adminCookie && opener && opener.chmln && opener.chmln.Editor.lib.Preview,
-    shouldPreview = !!(Preview && Preview.decorator),
+    shouldPreview = win.chmln.isPreviewing = !!(Preview && Preview.window),
     shouldEdit = (win.chmln.isEditing = adminCookie) && !shouldPreview,
     session = !!sessionToken,
     chmlnLoaded = false,
