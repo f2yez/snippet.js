@@ -4,11 +4,11 @@
     ecosystemURL = buildURL(root.accountToken+'/ecosystem'),
     habitatURL = buildURL(root.accountToken+'/'+habitatToken+'/habitat'),
     sessionRegex = /[?&#]chmln-editor-session=([^&#]*)/g,
-    location = win.chmln.location || win.location.toString(),
+    loc = (root.location || win.chmln.location || win.location.href).toString(),
     sessionToken = fetchSessionToken(),
     adminCookie = !!fetchCookie('admin'),
     opener = window.opener,
-    Preview = adminCookie && opener && opener.chmln && opener.chmln.Editor.lib.Preview,
+    Preview = fetchPreview(),
     shouldPreview = win.chmln.isPreviewing = !!(Preview && Preview.window),
     shouldEdit = (win.chmln.isEditing = adminCookie) && !shouldPreview,
     session = !!sessionToken,
@@ -16,7 +16,7 @@
     chmlnDataLoaded = false,
     editorLoaded = false,
     editorDataLoaded = false,
-    url = location.replace(sessionRegex, '');
+    url = loc.replace(sessionRegex, '');
 
   win.history && win.history.replaceState && win.history.replaceState(null, null, url);
 
@@ -84,8 +84,17 @@
   }
 
   function fetchSessionToken() {
-    var string = sessionRegex.exec(location);
+    var string = sessionRegex.exec(loc);
     return string ? string[1] : null;
+  }
+
+  function fetchPreview() {
+    var preview;
+    try {
+      preview = adminCookie && opener && opener.chmln && opener.chmln.Editor.lib.Preview
+    } catch(e) { }
+
+    return preview;
   }
 
   function tryChmlnStart() {

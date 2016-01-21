@@ -18,7 +18,7 @@ describe('micro', function() {
     delete global.chmln;
 
     window = {
-      location: 'https://yoursite.com',
+      location: { href: 'https://yoursite.com' },
       localStorage: {
         getItem: function(key) {
           return localGets[key];
