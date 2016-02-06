@@ -5,5 +5,4 @@ deployment:
   production:
     branch: master
     commands:
-      - make deploy
       - make release
