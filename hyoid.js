@@ -18,11 +18,11 @@
       win.chmln[keys[i]] = root[keys[i]];
     }
   }
-
-  chmlnStart();
   '{{editor}}';
 
   var loggedIn = chmln.isEditing = !!chmln.Editor;
+
+  chmlnStart();
 
   if(loginToken) {
     !chmln.Editor && newScript(buildURL('fast', 'editor/index.min.js'), editorStart);
