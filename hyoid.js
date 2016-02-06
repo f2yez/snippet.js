@@ -29,14 +29,11 @@
 
     newScript(buildURL('dashboard', 'login/'+loginToken+'.min.js'), function() {
       loggedIn = true;
-      editorStart();
-    });
-  } else if(loggedIn) {
-    newScript(buildURL('edit', root.accountToken+'/ecosystem.min.js'), function() {
-      editorDataLoaded = true;
-      editorStart();
+      fetchEditorData();
     });
   }
+
+  loggedIn && fetchEditorData();
 
   function newScript(src, onload) {
     var script = doc.createElement('script');
@@ -63,6 +60,13 @@
 
   function fetchPreview() {
     try { return win.opener.chmln.Editor.lib.Preview; } catch(e) { }
+  }
+
+  function fetchEditorData() {
+    newScript(buildURL('edit', root.accountToken+'/ecosystem.min.js'), function() {
+      editorDataLoaded = true;
+      editorStart();
+    });
   }
 
   var chmlnStarted = false,
