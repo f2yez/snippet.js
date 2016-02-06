@@ -11,9 +11,10 @@ Done
 1. Load the editor scripts synchronously only when the editor is going to be shown [Won't implement - we always load chmln.js first then editor.js and the data *]
 1. Load the scripts asynchronously when the editor is minimized [Won't implement - *]
 1. Look for chmln-user-admin to know that the user is authenticated for editing [Done in 1.0.10]
-1. Upload index.min.js to a gist.
-1. Configure other apps to pull from the ever-updating gist file.
 
 TODO
 ------
 1. Expose the snippet version to the chmln global object
+1. Disable messo.js in favor of hyoid.js
+1. Remove all of the pre-building of messo.js code
+1. Disable CircleCI build based on environment variables
