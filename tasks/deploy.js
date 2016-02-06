@@ -7,7 +7,8 @@
     files = require('fs'),
     directory = process.cwd();
 
-  var zlib = require('zlib'),
+  var request = require('request'),
+    zlib = require('zlib'),
     gzippedBody = zlib.gzipSync(files.readFileSync(directory+'/hyoid.js'));
 
   console.log('Gzipped to: '+Buffer.byteLength(gzippedBody.toString())/1024+'KB');
