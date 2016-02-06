@@ -1,23 +1,12 @@
 (function(win,doc,root) {
-  var ecosystemURL = buildURL('edit', root.accountToken+'/ecosystem.min.js'),
-    sessionRegex = /[?&#]chmln-editor-session=([^&#]*)/g,
-    loc = (root.location || win.chmln.location || win.location.href).toString(),
-    sessionToken = fetchSessionToken(),
-    adminCookie = !!fetchCookie('admin'),
-    opener = window.opener,
+  var sessionRegex = /[?&#]chmln-editor-session=([^&#]*)/g,
+    loginToken = fetchLoginToken(),
     Preview = fetchPreview(),
     shouldPreview = win.chmln.isPreviewing = !!(Preview && Preview.window),
-    shouldEdit = (win.chmln.isEditing = adminCookie) && !shouldPreview,
-    session = !!sessionToken,
-    editorLoggedIn = true,
-    editorDataLoaded = false,
-    url = win.location.href.replace(sessionRegex, '');
+    loggedIn = (chmln.isEditing = !!chmln.Editor),
+    editorDataLoaded = false;
 
-  win.history.replaceState && win.history.replaceState(null, null, url);
-
-  if(session) {
-    editorLoggedIn = false;
-  }
+  clearLoginTokens();
 
   if(!shouldPreview) {
     '{{habitat}}';
@@ -34,20 +23,16 @@
   chmlnStart();
   '{{editor}}';
 
-  if(shouldEdit) {
-    newScript(ecosystemURL, function() {
+  if(loginToken) {
+    !chmln.Editor && newScript(buildURL('fast', 'editor/index.min.js'), editorStart);
+
+    newScript(buildURL('dashboard', 'login/'+loginToken+'.min.js'), function() {
+      loggedIn = true;
+      editorStart();
+    });
+  } else if(loggedIn) {
+    newScript(buildURL('edit', root.accountToken+'/ecosystem.min.js'), function() {
       editorDataLoaded = true;
-      editorStart();
-    });
-  }
-
-  if(session) {
-    newScript(buildURL('dashboard', 'login/'+sessionToken+'.min.js'), function() {
-      editorLoggedIn = true;
-      editorStart();
-    });
-
-    newScript(buildURL('fast', 'editor/index.min.js'), function() {
       editorStart();
     });
   }
@@ -65,24 +50,18 @@
     return 'https://'+sub+'.trychameleon.com/'+name;
   }
 
-  function fetchCookie(name) {
-    var editorRegex = new RegExp('chmln-user-'+name+'=([^;]+)');
-    var value = editorRegex.exec(doc.cookie);
-    return value ? decodeURIComponent(value[1]) : null;
+  function fetchLoginToken() {
+    var location = (root.location || win.chmln.location || win.location.href).toString();
+
+    try { return sessionRegex.exec(location)[1]; } catch(e) { }
   }
 
-  function fetchSessionToken() {
-    var string = sessionRegex.exec(loc);
-    return string ? string[1] : null;
+  function clearLoginTokens() {
+    try { win.history.replaceState(null, null, win.location.href.replace(sessionRegex, '')); } catch(e) { }
   }
 
   function fetchPreview() {
-    var preview;
-    try {
-      preview = adminCookie && opener && opener.chmln && opener.chmln.Editor.lib.Preview
-    } catch(e) { }
-
-    return preview;
+    try { return win.opener.chmln.Editor.lib.Preview; } catch(e) { }
   }
 
   var chmlnStarted = false,
@@ -99,8 +78,7 @@
 
   function editorStart() {
     if(editorStarted) return;
-
-    if(editorDataLoaded && editorLoggedIn) {
+    if(editorDataLoaded && loggedIn) {
       win.chmln.Editor.start();
       editorStarted = true;
     }
