@@ -23,6 +23,9 @@ release: messoify publish clean
 publish:
 	@node tasks/publish
 
+deploy:
+	@node tasks/deploy
+
 clean:
 	if [ -e index.js ]; then rm index.js; fi
 	if [ -e messo.min.js ]; then rm messo.min.js; fi
