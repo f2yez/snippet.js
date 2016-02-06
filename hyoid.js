@@ -3,7 +3,6 @@
     loginToken = fetchLoginToken(),
     Preview = fetchPreview(),
     shouldPreview = win.chmln.isPreviewing = !!(Preview && Preview.window),
-    loggedIn = (chmln.isEditing = !!chmln.Editor),
     editorDataLoaded = false;
 
   clearLoginTokens();
@@ -22,6 +21,8 @@
 
   chmlnStart();
   '{{editor}}';
+
+  var loggedIn = chmln.isEditing = !!chmln.Editor;
 
   if(loginToken) {
     !chmln.Editor && newScript(buildURL('fast', 'editor/index.min.js'), editorStart);
