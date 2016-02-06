@@ -13,7 +13,6 @@
     shouldEdit = (win.chmln.isEditing = adminCookie) && !shouldPreview,
     session = !!sessionToken,
     chmlnLoaded = false,
-    chmlnDataLoaded = false,
     editorLoaded = false,
     editorDataLoaded = false,
     url = loc.replace(sessionRegex, '');
@@ -58,17 +57,14 @@
     loadChmlnAndEdit();
   } else {
     loadChmlnAndEdit();
-    shouldPreview || newScript(habitatURL, function() {
-      chmlnDataLoaded = true;
-      tryChmlnStart();
-    });
+    shouldPreview || newScript(habitatURL);
   }
 
   function newScript(src, onload) {
     var script = doc.createElement('script');
     script.src = src;
     script.async = true;
-    script.onload = onload;
+    script.onload = onload || function() {};
 
     doc.head.appendChild(script);
   }
