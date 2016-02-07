@@ -103,6 +103,17 @@ describe('messo', function() {
     });
   });
 
+  describe('when chmln has been started', function() {
+    beforeEach(function() {
+      chmln.root = 'already defined';
+      requireMesso();
+    });
+
+    it('should add not scripts', function() {
+      expect(elementTagNames.length).toBe(0);
+    });
+  });
+
   describe('when authenticated for editing', function() {
     beforeEach(function() {
       document.cookie = 'chmln-user-admin=foo;';

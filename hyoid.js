@@ -5,6 +5,10 @@
     shouldPreview = win.chmln.isPreviewing = !!(Preview && Preview.window),
     editorDataLoaded = false;
 
+  if(win.chmln.root) {
+    return;
+  }
+
   clearLoginTokens();
 
   if(!shouldPreview) {

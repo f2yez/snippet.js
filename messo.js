@@ -17,6 +17,10 @@
     editorDataLoaded = false,
     url = loc.replace(sessionRegex, '');
 
+  if(win.chmln.root) {
+    return;
+  }
+
   win.history && win.history.replaceState && win.history.replaceState(null, null, url);
 
   function loadChmlnAndEdit() {
