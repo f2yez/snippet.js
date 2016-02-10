@@ -11,10 +11,6 @@
 
   clearLoginTokens();
 
-  if(!shouldPreview) {
-    '{{habitat}}';
-  }
-
   '{{chmln}}';
   var i, keys = Object.keys(root);
   for(i=0; i<keys.length; ++i) {
@@ -28,6 +24,10 @@
   }
 
   var loggedIn = chmln.isEditing = !!chmln.Editor;
+
+  if(!loggedIn) {
+    '{{habitat}}';
+  }
 
   chmlnStart();
 
