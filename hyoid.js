@@ -22,7 +22,10 @@
       win.chmln[keys[i]] = root[keys[i]];
     }
   }
-  '{{editor}}';
+
+  if(!shouldPreview) {
+    '{{editor}}';
+  }
 
   var loggedIn = chmln.isEditing = !!chmln.Editor;
 
