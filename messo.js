@@ -103,7 +103,7 @@
   }
 
   function tryEditorStart() {
-    if(chmlnLoaded && editorLoaded && editorDataLoaded) {
+    if(chmlnLoaded && editorLoaded && editorDataLoaded && (chmln.data && chmln.data.account)) {
       win.chmln.Editor.start();
     }
   }

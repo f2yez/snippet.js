@@ -164,11 +164,24 @@ describe('messo', function() {
         window.chmln.Editor = { start: jasmine.createSpy('chmln.Editor.start') };
 
         elementTagNames[1].onload.call(global);
-        elementTagNames[2].onload.call(global);
       });
 
-      it('should start the Editor', function() {
-        expect(window.chmln.Editor.start).toHaveBeenCalled();
+      it('should not start the Editor', function() {
+        elementTagNames[2].onload.call(global);
+
+        expect(window.chmln.Editor.start).not.toHaveBeenCalled();
+      });
+
+      describe('when the user is authorized on the account', function() {
+        beforeEach(function() {
+          chmln.data = { account: 'an account' };
+
+          elementTagNames[2].onload.call(global);
+        });
+
+        it('should start the Editor', function() {
+          expect(window.chmln.Editor.start).toHaveBeenCalled();
+        });
       });
     });
   });

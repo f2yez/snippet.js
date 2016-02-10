@@ -91,7 +91,8 @@
   function editorStart() {
     if(editorStarted) return;
     if(editorDataLoaded && loggedIn) {
-      win.chmln.Editor.start();
+      (chmln.data && chmln.data.account) && win.chmln.Editor.start();
+
       editorStarted = true;
     }
   }
