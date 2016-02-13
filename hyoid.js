@@ -105,11 +105,11 @@
     var hosts, accountId;
 
     try {
-      hosts = chmln.data.account.get('hosts');
+      hosts = chmln.data.account.get('hosts') || [];
       accountId = chmln.data.account.id;
     } catch(e) { }
 
-    if(hosts && accountId && hosts.indexOf(location.host) >= 0) {
+    if(accountId && hosts.indexOf(win.location.hostname) === -1) {
       newScript(buildURL('wave', 'accounts/'+accountId+'/urls/index.min.js?href='+encodeURIComponent(win.location.href)))
     }
   }
