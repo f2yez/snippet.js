@@ -14,13 +14,13 @@
     session = !!sessionToken,
     chmlnLoaded = false,
     editorLoaded = false,
-    editorDataLoaded = false,
-    url = loc.replace(sessionRegex, '');
+    editorDataLoaded = false;
 
   if(win.chmln.root) {
     return;
   }
 
+  var url = ((win.location && win.location.href) || loc).replace(sessionRegex, '');
   win.history && win.history.replaceState && win.history.replaceState(null, null, url);
 
   function loadChmlnAndEdit() {
