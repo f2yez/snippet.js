@@ -23,7 +23,8 @@
     '{{editor}}';
   }
 
-  var loggedIn = chmln.isEditing = !!chmln.Editor;
+  chmln.isEditing = !!(chmln.Editor || loginToken || shouldPreview);
+  var loggedIn = !!chmln.Editor;
 
   if(!loggedIn) {
     '{{habitat}}';
@@ -74,7 +75,15 @@
   }
 
   function fetchEditorData() {
-    newScript(buildURL('edit', root.accountToken+'/ecosystem.min.js'), function() {
+    var url = root.accountToken+'/ecosystem.min.js';
+
+    if(chmln.auth) {
+      url += '?chmln-user-id='+chmln.auth.user.id;
+      url += '&chmln-user-token='+chmln.auth.user.token;
+      url += '&chmln-account-id='+chmln.auth.account.id;
+    }
+
+    newScript(buildURL('edit', url), function() {
       editorDataLoaded = true;
       editorStart();
     });
@@ -95,7 +104,15 @@
   function editorStart() {
     if(editorStarted) return;
     if(editorDataLoaded && loggedIn) {
-      (chmln.data && chmln.data.account) && win.chmln.Editor.start();
+      if(chmln.data && chmln.data.account) {
+        win.chmln.Editor.start();
+      } else {
+        // win.chmln.isEditing = false;
+        ////
+        // TODO Note you should not be editing when you do not have permission for the account `chmln.data.account`
+        // TODO win.chmln.editor404();
+        //
+      }
 
       editorStarted = true;
     }
@@ -109,7 +126,7 @@
       accountId = chmln.data.account.id;
     } catch(e) { }
 
-    if(accountId && hosts.indexOf(win.location.hostname) === -1) {
+    if(accountId && !chmln.adminPreview && hosts.indexOf(win.location.hostname) === -1) {
       newScript(buildURL('wave', 'accounts/'+accountId+'/urls/index.min.js?href='+encodeURIComponent(win.location.href)))
     }
   }
