@@ -26,7 +26,7 @@
   chmln.isEditing = !!(chmln.Editor || loginToken || shouldPreview);
   var loggedIn = !!chmln.Editor;
 
-  if(!loggedIn) {
+  if(!chmln.isEditing) {
     '{{habitat}}';
   }
 
@@ -43,7 +43,7 @@
 
   if(loggedIn) {
     fetchEditorData()
-  } else {
+  } else if(!shouldPreview) {
     logCurrentUrl();
   }
 
