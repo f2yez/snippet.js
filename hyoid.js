@@ -1,6 +1,7 @@
 (function(win,doc,root) {
   var sessionRegex = /[?&#]chmln-editor-session=([^&#]*)/g,
-    loginToken = fetchLoginToken(),
+    authOrigin = buildURL('auth', ''),
+    loginUrl = fetchLoginUrl(),
     Preview = fetchPreview(),
     shouldPreview = win.chmln.isPreviewing = !!(Preview && Preview.window),
     editorDataLoaded = false;
@@ -23,7 +24,7 @@
     '{{editor}}';
   }
 
-  chmln.isEditing = !!(chmln.Editor || loginToken || shouldPreview);
+  chmln.isEditing = !!(chmln.Editor || loginUrl || shouldPreview);
   var loggedIn = !!chmln.Editor;
 
   if(!chmln.isEditing) {
@@ -32,19 +33,27 @@
 
   chmlnStart();
 
-  if(loginToken) {
+  if(loginUrl || (loginUrl = openerLoginUrl())) {
     !chmln.Editor && newScript(buildURL('fast', 'editor/index.min.js'), editorStart);
 
-    newScript(buildURL('dashboard', 'login/'+loginToken+'.min.js'), function() {
+    newScript(loginUrl, function() {
       loggedIn = true;
       fetchEditorData();
     });
   }
 
   if(loggedIn) {
-    fetchEditorData()
+    fetchEditorData();
   } else if(!shouldPreview) {
     logCurrentUrl();
+  }
+
+  function clearLoginTokens() {
+    try { win.history.replaceState(null, null, win.location.href.replace(sessionRegex, '')); } catch(e) { }
+  }
+
+  function sayHello() {
+    try { win.opener.postMessage('chmln:editor:started', '*'); } catch(e) { } // authOrigin
   }
 
   function newScript(src, onload) {
@@ -60,14 +69,28 @@
     return 'https://'+sub+'.trychameleon.com/'+name;
   }
 
-  function fetchLoginToken() {
-    var location = (root.location || win.chmln.location || win.location.href).toString();
+  function fetchLoginUrl() {
+    var location = (root.location || win.chmln.location || win.location.href).toString(),
+      token = null;
 
-    try { return sessionRegex.exec(location)[1]; } catch(e) { }
+    try { token = sessionRegex.exec(location)[1]; } catch(e) { }
+
+    return token && buildURL('dashboard', 'login/'+token+'.min.js');
   }
 
-  function clearLoginTokens() {
-    try { win.history.replaceState(null, null, win.location.href.replace(sessionRegex, '')); } catch(e) { }
+  function openerLoginUrl() {
+    var token = null, onMessage,
+      tokenRegex = /chmln:editor:token:/;
+
+    try {
+      win.addEventListener('message', onMessage = function(e) { var event = e.originalEvent;
+        tokenRegex.test(event.data) && (token = event.data.replace(tokenRegex, ''));
+      });
+      win.opener.postMessage('chmln:editor:login', '*'); // authOrigin
+      win.removeEventListener('message', onMessage);
+    } catch(e) { }
+
+    return token && buildURL('dashboard', 'tokens/'+token+'.min.js');
   }
 
   function fetchPreview() {
@@ -106,6 +129,7 @@
     if(editorDataLoaded && loggedIn) {
       if(chmln.data && chmln.data.account) {
         win.chmln.Editor.start();
+        sayHello();
       } else {
         // win.chmln.isEditing = false;
         ////
