@@ -1,8 +1,7 @@
 (function(win,doc,root) {
   var sessionRegex = /[?&#]chmln-editor-session=([^&#]*)/g,
-    authOrigin = buildURL('auth', ''),
+    tokenRegex = /[?&#]chmln-editor-token=([^&#]*)/g,
     loginUrl = fetchLoginUrl(),
-    shouldLogin = fetchShouldLogin(),
     launcherWindow = null,
     Preview = fetchPreview(),
     shouldPreview = win.chmln.isPreviewing = !!(Preview && Preview.window),
@@ -13,6 +12,7 @@
   }
 
   clearLoginTokens();
+  captureParentWindow();
 
   '{{chmln}}';
   var i, keys = Object.keys(root);
@@ -26,7 +26,7 @@
     '{{editor}}';
   }
 
-  chmln.isEditing = !!(chmln.Editor || loginUrl || shouldLogin || shouldPreview);
+  chmln.isEditing = !!(chmln.Editor || loginUrl || shouldPreview);
   var loggedIn = !!chmln.Editor;
 
   if(!chmln.isEditing) {
@@ -35,7 +35,14 @@
 
   chmlnStart();
 
-  loginUrl && loginUser();
+  if(loginUrl) {
+    !chmln.Editor && newScript(buildURL('fast', 'editor/index.min.js'), editorStart);
+
+    newScript(loginUrl, function() {
+      loggedIn = true;
+      fetchEditorData();
+    });
+  }
 
   if(loggedIn) {
     fetchEditorData();
@@ -44,11 +51,15 @@
   }
 
   function clearLoginTokens() {
-    try { win.history.replaceState(null, null, win.location.href.replace(sessionRegex, '')); } catch(e) { }
+    try { var href = win.location.href.replace(sessionRegex, '').replace(tokenRegex, '');
+      win.history.replaceState(null, null, href);
+    } catch(e) { }
   }
 
   function sayHello() {
-    try { launcherWindow.postMessage('chmln:editor:login:completed', '*'); } catch(e) { } // authOrigin
+    loginUrl && clearLoginTokens();
+
+    try { launcherWindow.postMessage('chmln:editor:started', '*'); } catch(e) { } // authOrigin
   }
 
   function newScript(src, onload) {
@@ -66,40 +77,22 @@
 
   function fetchLoginUrl() {
     var location = (root.location || win.chmln.location || win.location.href).toString(),
-      token = null;
+      specs = [['tokens', tokenRegex], ['login', sessionRegex]], url = null;
 
-    try { token = sessionRegex.exec(location)[1]; } catch(e) { }
-
-    return token && buildURL('dashboard', 'login/'+token+'.min.js');
-  }
-
-  function fetchShouldLogin() {
-    var loginKey = 'chmln:editor:login',
-      shouldLogin, token, onMessage;
-
-    try { shouldLogin = !!win.localStorage.getItem(loginKey); } catch(e) { }
-
-    console.log('fetchShouldLogin:1', shouldLogin);
-
-    if(shouldLogin) {
-      win.addEventListener('message', onMessage = function(event) {
-        console.log('fetchShouldLogin:2:shouldLogin', event.data, event);
-        if(event.data === loginKey) {
-          (launcherWindow = event.source).postMessage(loginKey, '*');
-        } else {
-          event.data.indexOf(loginKey) === 0 && (token = event.data.replace(loginKey, ''));
-          win.removeEventListener('message', onMessage);
-        }
-        console.log('fetchShouldLogin:3:shouldLogin', token, launcherWindow);
-      });
-      setTimeout(function() {
-        token && (loginUrl = buildURL('dashboard', 'tokens/'+token+'.min.js')) && loginUser();
-
-        console.log('fetchShouldLogin:4:setTimeout', token, loginUrl);
-      }, 250);
+    for(var i=0; i<specs.length; ++i) {
+      try { url = url || buildURL('dashboard', specs[i][0]+'/'+specs[i][1].exec(location)[1]+'.min.js') } catch(e) { }
     }
 
-    return shouldLogin;
+    return url;
+  }
+
+  function captureParentWindow() { var onMessage;
+    if(!loginUrl) return;
+
+    win.addEventListener('message', onMessage = function(event) { console.log('onMessage:1', event);
+      /:\/\/dashboard\.trychameleon/.test(event.origin) && (launcherWindow = event.source);
+    });
+    setTimeout(function() { win.removeEventListener('message', onMessage) }, 500);
   }
 
   function fetchPreview() {
@@ -118,15 +111,6 @@
     newScript(buildURL('edit', url), function() {
       editorDataLoaded = true;
       editorStart();
-    });
-  }
-
-  function loginUser() {
-    !chmln.Editor && newScript(buildURL('fast', 'editor/index.min.js'), editorStart);
-
-    newScript(loginUrl, function() {
-      loggedIn = true;
-      fetchEditorData();
     });
   }
 
