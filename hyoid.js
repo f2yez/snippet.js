@@ -85,7 +85,7 @@
 
     try { console.log('openerLoginUrl:1', win.localStorage.getItem(loginKey));
       opener = JSON.parse(win.localStorage.getItem(loginKey));
-      opener = win.open.apply(win, opener);
+      opener = opener && win.open.apply(win, opener);
       console.log('openerLoginUrl:2', opener);
       win.addEventListener('message', onMessage = function(event) { _event = event;
         event.data.indexOf(loginKey) === 0 && (token = event.data.replace(loginKey, ''));
