@@ -62,8 +62,6 @@
   }
 
   function captureParentWindow() { var onMessage;
-    if(!loginUrl) return;
-
     win.addEventListener('message', onMessage = function(event) {
       /:\/\/dashboard\.trychameleon/.test(event.origin) && (launcherWindow = event.source);
     });
