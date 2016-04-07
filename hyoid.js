@@ -83,7 +83,7 @@
       tokenRegex = /chmln:editor:token:/;
 
     try {
-      win.addEventListener('message', onMessage = function(e) { var event = e.originalEvent;
+      win.addEventListener('message', onMessage = function(event) {
         tokenRegex.test(event.data) && (token = event.data.replace(tokenRegex, ''));
       });
       win.opener.postMessage('chmln:editor:login', '*'); // authOrigin
