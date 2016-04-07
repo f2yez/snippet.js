@@ -2,6 +2,8 @@
   var sessionRegex = /[?&#]chmln-editor-session=([^&#]*)/g,
     authOrigin = buildURL('auth', ''),
     loginUrl = fetchLoginUrl(),
+    shouldLogin = fetchShouldLogin(),
+    launcherWindow = null,
     Preview = fetchPreview(),
     shouldPreview = win.chmln.isPreviewing = !!(Preview && Preview.window),
     editorDataLoaded = false;
@@ -24,7 +26,7 @@
     '{{editor}}';
   }
 
-  chmln.isEditing = !!(chmln.Editor || loginUrl || shouldPreview);
+  chmln.isEditing = !!(chmln.Editor || loginUrl || shouldLogin || shouldPreview);
   var loggedIn = !!chmln.Editor;
 
   if(!chmln.isEditing) {
@@ -33,14 +35,7 @@
 
   chmlnStart();
 
-  if(loginUrl || (loginUrl = openerLoginUrl())) {
-    !chmln.Editor && newScript(buildURL('fast', 'editor/index.min.js'), editorStart);
-
-    newScript(loginUrl, function() {
-      loggedIn = true;
-      fetchEditorData();
-    });
-  }
+  loginUrl && loginUser();
 
   if(loggedIn) {
     fetchEditorData();
@@ -53,7 +48,7 @@
   }
 
   function sayHello() {
-    try { win.opener.postMessage('chmln:editor:started', '*'); } catch(e) { } // authOrigin
+    try { launcherWindow.postMessage('chmln:editor:login:completed', '*'); } catch(e) { } // authOrigin
   }
 
   function newScript(src, onload) {
@@ -78,24 +73,33 @@
     return token && buildURL('dashboard', 'login/'+token+'.min.js');
   }
 
-  function openerLoginUrl() {
-    var token, onMessage, opener,
-      _event,
-      loginKey = 'chmln:editor:login';
+  function fetchShouldLogin() {
+    var loginKey = 'chmln:editor:login',
+      shouldLogin, token, onMessage;
 
-    try { console.log('openerLoginUrl:1', win.localStorage.getItem(loginKey));
-      opener = JSON.parse(win.localStorage.getItem(loginKey));
-      opener = opener && win.open.apply(win, opener);
-      console.log('openerLoginUrl:2', opener);
-      win.addEventListener('message', onMessage = function(event) { _event = event;
-        event.data.indexOf(loginKey) === 0 && (token = event.data.replace(loginKey, ''));
+    try { shouldLogin = !!win.localStorage.getItem(loginKey); } catch(e) { }
+
+    console.log('fetchShouldLogin:1', shouldLogin);
+
+    if(shouldLogin) {
+      win.addEventListener('message', onMessage = function(event) {
+        console.log('fetchShouldLogin:2:shouldLogin', event.data, event);
+        if(event.data === loginKey) {
+          (launcherWindow = event.source).postMessage(loginKey, '*');
+        } else {
+          event.data.indexOf(loginKey) === 0 && (token = event.data.replace(loginKey, ''));
+          win.removeEventListener('message', onMessage);
+        }
+        console.log('fetchShouldLogin:3:shouldLogin', token, launcherWindow);
       });
-      opener.postMessage(loginKey, '*'); // authOrigin
-      console.log('openerLoginUrl:3', token, _event);
-      win.removeEventListener('message', onMessage);
-    } catch(e) { }
+      setTimeout(function() {
+        token && (loginUrl = buildURL('dashboard', 'tokens/'+token+'.min.js')) && loginUser();
 
-    return token && buildURL('dashboard', 'tokens/'+token+'.min.js');
+        console.log('fetchShouldLogin:4:setTimeout', token, loginUrl);
+      }, 250);
+    }
+
+    return shouldLogin;
   }
 
   function fetchPreview() {
@@ -114,6 +118,15 @@
     newScript(buildURL('edit', url), function() {
       editorDataLoaded = true;
       editorStart();
+    });
+  }
+
+  function loginUser() {
+    !chmln.Editor && newScript(buildURL('fast', 'editor/index.min.js'), editorStart);
+
+    newScript(loginUrl, function() {
+      loggedIn = true;
+      fetchEditorData();
     });
   }
 
