@@ -27,6 +27,8 @@
     }
   }
 
+  chmln.isEditing = !!chmln.Editor || shouldPreview;
+
   chmlnStart();
 
   if(chmln.Editor) {
