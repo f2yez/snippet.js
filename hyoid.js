@@ -1,14 +1,7 @@
 (function(win,doc,root) {
-  var sessionRegex = /[?&#]chmln-editor-session=([^&#]*)/g,
-    loggedIn, shouldPreview, editorDataLoaded, launcherWindow,
-    Preview = fetchPreview();
-
   if(win.chmln.root) {
     return;
   }
-
-  clearLoginTokens();
-  captureParentWindow();
 
   '{{chmln}}';
   var i, keys = Object.keys(root),
@@ -20,32 +13,31 @@
     }
   }
 
-  if(!(shouldPreview = chmln.isPreviewing = !!(Preview && Preview.window))) {
-    '{{editor}}';
-  }
+  captureParentWindow();
 
-  if(!(chmln.isEditing = (loggedIn = !!chmln.Editor) || shouldPreview)) {
-    '{{habitat}}';
+  var Preview = fetchPreview(),
+    shouldPreview = chmln.isPreviewing = !!(Preview && Preview.window),
+    dataLoaded;
+
+  if(!shouldPreview) {
+    '{{editor}}';
+
+    if(!chmln.Editor) {
+      '{{habitat}}';
+    }
   }
 
   chmlnStart();
 
-  if(loggedIn) {
+  if(chmln.Editor) {
     fetchEditorData();
-  } else if(!shouldPreview) {
+    launcherNotify('loading');
+  } else {
     logCurrentUrl();
   }
 
-  function clearLoginTokens() {
-    try { var href = win.location.href.replace(sessionRegex, '');
-      win.history.replaceState(null, null, href);
-    } catch(e) { }
-  }
-
-  function sayHello() {
-    clearLoginTokens();
-
-    try { launcherWindow.postMessage('chmln:editor:started', '*'); } catch(e) { } // authOrigin
+  function launcherNotify(name) {
+    try { launcher.postMessage('chmln:editor:'+name, '*'); } catch(e) { }
   }
 
   function newScript(src, onload) {
@@ -61,9 +53,10 @@
     return 'https://'+sub+'.trychameleon.com/'+name;
   }
 
+  var launcher;
   function captureParentWindow() { var onMessage;
     win.addEventListener('message', onMessage = function(event) {
-      /:\/\/dashboard\.trychameleon/.test(event.origin) && (launcherWindow = event.source);
+      /:\/\/dashboard\.trychameleon/.test(event.origin) && (launcher = event.source);
     });
     setTimeout(function() { win.removeEventListener('message', onMessage) }, 750);
   }
@@ -82,7 +75,7 @@
     }
 
     newScript(buildURL('edit', url), function() {
-      editorDataLoaded = true;
+      dataLoaded = true;
       editorStart();
     });
   }
@@ -101,18 +94,24 @@
 
   function editorStart() {
     if(editorStarted) return;
-    if(editorDataLoaded && loggedIn) {
+    if(dataLoaded) {
+      var status = 'started';
+
       if(chmln.data && chmln.data.account) {
         chmln.Editor.start();
 
-        sayHello();
+        logCurrentUrl();
       } else {
+        status = 'not_authorized:'+root.accountToken;
         // win.chmln.isEditing = false;
+        // chmln.data.profile.set('admin', false);
         ////
         // TODO Note you should not be editing when you do not have permission for the account `chmln.data.account`
         // TODO win.chmln.editor404();
         //
       }
+
+      launcherNotify(status);
 
       editorStarted = true;
     }
