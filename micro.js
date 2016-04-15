@@ -1,11 +1,9 @@
-(function(doc,win,accountToken) {
+(function(doc,win,token) {
   var chmln = 'chmln',
-    names = 'setup identify alias track set show on off custom help _data'.split(' '),
-    src = '{{FAST_URL}}/messo/'+accountToken+'/messo.min.js',
-    localSrc = win.localStorage && win.localStorage.getItem(chmln+':messo-url');
+    names = 'setup identify alias track set show on off custom help _data'.split(' ');
 
   win[chmln] || (win[chmln] = {});
-  win[chmln].accountToken = accountToken;
+  win[chmln].accountToken = token;
   win[chmln].location = win.location.href.toString();
 
   for(var i = 0; i<names.length; i++) {
@@ -17,10 +15,8 @@
     })();
   }
 
-  // TODO we need a way to trigger a refresh of ALL account's messo.min.js file when the code structure of messo.min.js changes
-
   var script = doc.createElement('script');
-  script.src = localSrc || src;
+  script.src = '{{FAST_URL}}/messo/'+token+'/messo.min.js';
   script.async = true;
   doc.head.appendChild(script);
 })(document,window,'{{ACCOUNT_TOKEN}}');

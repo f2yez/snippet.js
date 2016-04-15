@@ -75,32 +75,6 @@ describe('micro', function() {
     });
   });
 
-  describe('locally given values', function() {
-    beforeEach(function() {
-      localGets['chmln:messo-url'] = 'https://chmln.js';
-    });
-
-    it('should have the given urls', function() {
-      requireShort();
-
-      expect(elementTagNames.length).toBe(1);
-      expect(elementTagNames[0].src).toBe('https://chmln.js');
-    });
-
-    describe('when local storage is not available', function() {
-      beforeEach(function() {
-        window.localStorage = null;
-      });
-
-      it('should have the default urls', function() {
-        requireShort();
-
-        expect(elementTagNames.length).toBe(1);
-        expect(elementTagNames[0].src).toMatch(/https:\/\/fast\.trychameleon\.com\/messo\/.+\/messo\.min\.js/);
-      });
-    });
-  });
-
   describe('.setup', function() {
     beforeEach(function() {
       requireShort();
