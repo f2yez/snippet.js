@@ -27,15 +27,16 @@
     }
   }
 
+  '{{territory}}';
+
   chmln.isEditing = !!chmln.Editor || shouldPreview;
 
   chmlnStart();
+  logCurrentUrl();
 
   if(chmln.Editor) {
     fetchEditorData();
     launcherNotify('loading');
-  } else {
-    logCurrentUrl();
   }
 
   function launcherNotify(name) {
@@ -69,12 +70,6 @@
 
   function fetchEditorData() {
     var url = root.accountToken+'/ecosystem.min.js';
-
-    if(chmln.auth) {
-      url += '?chmln-user-id='+chmln.auth.user.id;
-      url += '&chmln-user-token='+chmln.auth.user.token;
-      url += '&chmln-account-id='+chmln.auth.account.id;
-    }
 
     newScript(buildURL('edit', url), function() {
       dataLoaded = true;
@@ -120,15 +115,19 @@
   }
 
   function logCurrentUrl() {
-    var hosts, accountId;
+    var options = { host: win.location.host },
+      accountId, model;
 
     try {
-      hosts = chmln.data.account.get('hosts') || [];
       accountId = chmln.data.account.id;
+      model = chmln.data.urls.findWhere(options);
     } catch(e) { }
 
-    if(accountId && !chmln.adminPreview && hosts.indexOf(win.location.hostname) === -1) {
-      newScript(buildURL('wave', 'accounts/'+accountId+'/urls/index.min.js?href='+encodeURIComponent(win.location.href)))
-    }
+    if(!accountId || chmln.adminPreview) { return; }
+
+    model || (model = new chmln.models.Url(options));
+    model.id || model.set('href', win.location.href);
+    model.set(chmln.lib.Feature.all(model));
+    model.save();
   }
 })(window,document,window.chmln);
