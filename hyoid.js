@@ -118,6 +118,7 @@
     }
   }
 
+  var delay;
   function logCurrentUrl() {
     var options = { host: win.location.host },
       accountId, model;
@@ -127,11 +128,16 @@
       model = chmln.data.urls.findWhere(options);
     } catch(e) { }
 
-    if(!options.host || !accountId || chmln.adminPreview) { return; }
+    if(delay || !options.host || !accountId || chmln.adminPreview) { return; }
 
     model || (model = new chmln.models.Url(options));
-    model.id || model.set('href', win.location.href);
-    model.set(chmln.lib.Feature.all(model));
-    model.save();
+
+    var delayFN = function() {
+      model.set('href', win.location.href);
+      model.set(chmln.lib.Feature.all(model));
+      model.save();
+    };
+
+    model.id || delayFN(); (delay = win.setTimeout(delayFN, 7000));
   }
 })(window,document,window.chmln);
