@@ -120,7 +120,7 @@
 
   var delay;
   function logCurrentUrl() {
-    var options = { host: win.location.host },
+    var options = { host: win.location.hostname },
       accountId, model;
 
     try {
@@ -132,12 +132,15 @@
 
     model || (model = new chmln.models.Url(options));
 
-    var delayFN = function() {
-      model.get('href') || model.set('href', win.location.href);
-      model.set(chmln.lib.Feature.all(model));
+    var delayFN = function(positiveOnly) { var options = chmln.lib.Feature.all(model);
+      chmln._(options).each(function(value, k) {
+        positiveOnly && !value && (delete options[k]);
+      });
+
+      model.set(options);
       model.save();
     };
 
-    model.id || delayFN(); (delay = win.setTimeout(delayFN, 7000));
+    model.id || delayFN(true); (delay = win.setTimeout(delayFN, 7000));
   }
 })(window,document,window.chmln);
