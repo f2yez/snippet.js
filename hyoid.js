@@ -133,7 +133,7 @@
     model || (model = new chmln.models.Url(options));
 
     var delayFN = function() {
-      model.set('href', win.location.href);
+      model.get('href') || model.set('href', win.location.href);
       model.set(chmln.lib.Feature.all(model));
       model.save();
     };
