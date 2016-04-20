@@ -69,7 +69,8 @@
   }
 
   function fetchEditorData() {
-    var xhr = chmln.$.get(buildURL('edit', 'ecosystem.json'), {
+    var xhr = chmln.$.ajax(buildURL('edit', 'ecosystem.json'), {
+      type: 'GET',
       crossDomain: true,
       xhrFields: { withCredentials: true },
       beforeSend: function(x) { x.setRequestHeader('X-Account-Token', root.accountToken); }
