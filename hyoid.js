@@ -72,7 +72,7 @@
     var xhr = chmln.$.get(buildURL('edit', 'ecosystem.json'), {
       crossDomain: true,
       xhrFields: { withCredentials: true },
-      beforeSend: function(xhr) { xhr.setRequestHeader('X-Account-Token', root.accountToken); }
+      beforeSend: function(x) { x.setRequestHeader('X-Account-Token', root.accountToken); }
     });
 
     xhr.done(function(data) { chmln._data(data); });
