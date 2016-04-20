@@ -69,9 +69,14 @@
   }
 
   function fetchEditorData() {
-    var url = root.accountToken+'/ecosystem.min.js';
+    var xhr = chmln.$.get(buildURL('edit', 'ecosystem.json'), {
+      crossDomain: true,
+      xhrFields: { withCredentials: true },
+      beforeSend: function(xhr) { xhr.setRequestHeader('X-Account-Token', root.accountToken); }
+    });
 
-    newScript(buildURL('edit', url), function() {
+    xhr.done(function(data) { chmln._data(data); });
+    xhr.always(function() {
       dataLoaded = true;
       editorStart();
     });
@@ -123,7 +128,7 @@
       model = chmln.data.urls.findWhere(options);
     } catch(e) { }
 
-    if(!accountId || chmln.adminPreview) { return; }
+    if(!options.host || !accountId || chmln.adminPreview) { return; }
 
     model || (model = new chmln.models.Url(options));
     model.id || model.set('href', win.location.href);
