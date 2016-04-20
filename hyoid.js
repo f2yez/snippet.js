@@ -69,11 +69,9 @@
   }
 
   function fetchEditorData() {
-    var xhr = chmln.$.ajax(buildURL('edit', 'ecosystem.json'), {
-      type: 'GET',
-      crossDomain: true,
-      xhrFields: { withCredentials: true },
-      beforeSend: function(x) { x.setRequestHeader('X-Account-Token', root.accountToken); }
+    var xhr = chmln.$.ajax(buildURL('edit', root.accountToken+'/ecosystem.json'), {
+      type: 'GET', crossDomain: true,
+      xhrFields: { withCredentials: true }
     });
 
     xhr.done(function(data) { chmln._data(data); });
