@@ -118,7 +118,6 @@
     }
   }
 
-  var delay;
   function logCurrentUrl() {
     var options = { host: win.location.hostname },
       accountId, model;
@@ -128,19 +127,14 @@
       model = chmln.data.urls.findWhere(options);
     } catch(e) { }
 
-    if(delay || !options.host || !accountId || chmln.adminPreview) { return; }
+    if(!options.host || !accountId || chmln.adminPreview) { return; }
 
     model || (model = new chmln.models.Url(options));
 
-    var delayFN = function(positiveOnly) { var options = chmln.lib.Feature.all(model);
-      chmln._(options).each(function(value, k) {
-        positiveOnly && !value && (delete options[k]);
-      });
-
-      model.set(options);
+    var checkFeatures = function() {
+      model.set(chmln.lib.Feature.all(model));
       model.save();
     };
-
-    model.id || delayFN(true); (delay = win.setTimeout(delayFN, 7000));
+    chmln._([0,1,9]).each(function(i) { win.setTimeout(checkFeatures, i*2000) });
   }
 })(window,document,window.chmln);
