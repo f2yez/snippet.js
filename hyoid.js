@@ -56,7 +56,7 @@
     var url = win.location.href,
       modified = url.replace(/chmln-linked=[a-z]+:.{16}/, '');
 
-    try { url !== modified && (modified = modified.replace(/\?$/, '').replace(/&#/, '#')) && win.history.replaceState(null, null, modified); } catch(e) { }
+    try { url !== modified && (modified = modified.replace(/\?$/, '').replace(/(&|\?)#/, '#')) && win.history.replaceState(null, null, modified); } catch(e) { }
   }
 
   var launcher;
