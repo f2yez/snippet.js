@@ -13,6 +13,7 @@
     }
   }
 
+  clearUrlTokens();
   captureParentWindow();
 
   var previewKey = 'e:lPs:id',
@@ -52,6 +53,13 @@
 
   function buildURL(sub, name) {
     return 'https://'+sub+'.trychameleon.com/'+name;
+  }
+
+  function clearUrlTokens() {
+    var url = win.location.href,
+      modified = url.replace(/chmln-linked=[a-z]+:.{16}/, '');
+
+    try { url !== modified && (modified = modified.replace(/\?$/, '').replace(/&#/, '#')) && win.history.replaceState(null, null, modified); } catch(e) { }
   }
 
   var launcher;
