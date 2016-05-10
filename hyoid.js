@@ -15,21 +15,19 @@
 
   captureParentWindow();
 
-  var Preview = fetchPreview(),
-    shouldPreview = chmln.isPreviewing = !!(Preview && Preview.window),
+  var previewKey = 'e:lPs:id',
+    previewModel = fetchPreviewModel(),
     dataLoaded;
 
-  if(!shouldPreview) {
-    '{{editor}}';
+  chmln.isPreviewing = !!previewModel;
 
-    if(!chmln.Editor) {
-      '{{habitat}}';
-    }
+  '{{editor}}';
+
+  if(!(chmln.isEditing = !!chmln.Editor)) {
+    '{{habitat}}';
   }
 
   '{{territory}}';
-
-  chmln.isEditing = !!chmln.Editor || shouldPreview;
 
   chmlnStart();
   logCurrentUrl();
@@ -64,8 +62,15 @@
     setTimeout(function() { win.removeEventListener('message', onMessage) }, 750);
   }
 
-  function fetchPreview() {
-    try { return win.opener.chmln.Editor.lib.Preview; } catch(e) { }
+  function fetchPreviewModel() {
+    var sessionModel = chmln.lib.session.get(previewKey);
+
+    if(sessionModel) {
+      try { return chmln.lib.Marshal.load(sessionModel); } catch(e) { }
+    }
+
+    try { return win.opener.chmln.Editor.lib.Preview.model; } catch(e) { }
+    try { return chmln.lib.DeepLinked.model(); } catch(e) { }
   }
 
   function fetchEditorData() {
@@ -89,8 +94,14 @@
     chmlnStarted = true;
 
     chmln.start();
+  }
 
-    shouldPreview && (chmln.Preview = Preview).start();
+  function previewStart() {
+    if(!previewModel) { return; }
+
+    chmln.lib.session.set(previewKey, chmln.lib.Marshal.dump(previewModel));
+    chmln.Editor.lib.Preview.show(previewModel);
+    chmln.Editor.lib.Preview.start();
   }
 
   function editorStart() {
@@ -98,7 +109,9 @@
     if(dataLoaded) {
       var status = 'started';
 
-      if(chmln.data && chmln.data.account) {
+      if(previewModel) {
+        previewStart();
+      } else if(chmln.data && chmln.data.account) {
         chmln.Editor.start();
 
         logCurrentUrl();
