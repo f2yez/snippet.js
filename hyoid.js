@@ -1,5 +1,5 @@
 (function(win,doc,root) {
-  if(win.chmln.root) {
+  if(root.root) {
     return;
   }
 
