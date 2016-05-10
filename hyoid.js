@@ -17,10 +17,7 @@
   captureParentWindow();
 
   var previewKey = 'e:lPs:id',
-    previewModel = fetchPreviewModel(),
     dataLoaded;
-
-  chmln.isPreviewing = !!previewModel;
 
   '{{editor}}';
 
@@ -104,21 +101,22 @@
     chmln.start();
   }
 
-  function previewStart() {
-    if(!previewModel) { return; }
-
-    chmln.lib.session.set(previewKey, chmln.lib.Marshal.dump(previewModel));
-    chmln.Editor.lib.Preview.show(previewModel);
+  function previewStart(model) {
+    chmln.lib.session.set(previewKey, chmln.lib.Marshal.dump(model));
+    chmln.Editor.lib.Preview.show(model);
     chmln.Editor.lib.Preview.start();
   }
 
   function editorStart() {
     if(editorStarted) return;
     if(dataLoaded) {
-      var status = 'started';
+      var status = 'started',
+        previewModel = fetchPreviewModel();
+
+      chmln.isPreviewing = !!previewModel;
 
       if(previewModel) {
-        previewStart();
+        previewStart(previewModel);
       } else if(chmln.data && chmln.data.account) {
         chmln.Editor.start();
 
