@@ -19,13 +19,15 @@
   var previewKey = 'e:lPs:id',
     dataLoaded;
 
+  if(!chmln.isElusive) {
   '{{editor}}';
-
-  if(!(chmln.isEditing = !!chmln.Editor)) {
-    '{{habitat}}';
   }
 
-  '{{territory}}';
+  if(!(chmln.isEditing = !!chmln.Editor)) {
+  '{{habitat}}';
+  }
+
+  '{{territory}}'; // Load this before the editor, look for a specific *host* that the editor/chmln is disabled on
 
   chmlnStart();
   logCurrentUrl();
@@ -37,15 +39,6 @@
 
   function launcherNotify(name) {
     try { launcher.postMessage('chmln:editor:'+name, '*'); } catch(e) { }
-  }
-
-  function newScript(src, onload) {
-    var script = doc.createElement('script');
-    script.src = src;
-    script.async = true;
-    script.onload = onload || function() {};
-
-    doc.head.appendChild(script);
   }
 
   function buildURL(sub, name) {
