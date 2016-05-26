@@ -1,5 +1,8 @@
 (function(win,doc,root) {
-  if(root.root) {
+  var elusiveToUsers = /user/.test(root.elusive),
+    elusiveToAdmins = /admin/.test(root.elusive);
+
+  if(root.root || elusiveToUsers) {
     return;
   }
 
@@ -19,7 +22,7 @@
   var previewKey = 'e:lPs:id',
     dataLoaded;
 
-  if(!chmln.isElusive) {
+  if(!elusiveToAdmins) {
   '{{editor}}';
   }
 
