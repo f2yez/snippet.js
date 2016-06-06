@@ -100,7 +100,6 @@
   function previewStart(model) {
     chmln.lib.session.set(previewKey, chmln.lib.Marshal.dump(model));
     chmln.Editor.lib.Preview.show(model);
-    chmln.Editor.lib.Preview.start();
   }
 
   function editorStart() {
