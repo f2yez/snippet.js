@@ -27,6 +27,7 @@
   }
 
   var previewKey = 'e:lPs:id',
+    urlOptions = { host: win.location.hostname},
     dataLoaded;
 
   if(!elusiveToAdmins) {
@@ -68,7 +69,6 @@
     setTimeout(function() { win.removeEventListener('message', onMessage) }, 750);
   }
 
-  var urlOptions = { host: win.location.hostname };
   function hiddenOnHostname() {
     try { return chmln.data.urls.findWhere(urlOptions).get('hide_all'); } catch(e) { }
   }
