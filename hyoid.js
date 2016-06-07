@@ -2,6 +2,8 @@
   var elusiveToUsers = /user/.test(root.elusive),
     elusiveToAdmins = /admin/.test(root.elusive);
 
+  clearUrlTokens();
+
   if(root.root || elusiveToUsers) {
     return;
   }
@@ -16,8 +18,13 @@
     }
   }
 
-  clearUrlTokens();
   captureParentWindow();
+
+  '{{territory}}';
+
+  if(hiddenOnHostname()) {
+    return (chmln.isDisabled = true);
+  }
 
   var previewKey = 'e:lPs:id',
     dataLoaded;
@@ -29,8 +36,6 @@
   if(!(chmln.isEditing = !!chmln.Editor)) {
   '{{habitat}}';
   }
-
-  '{{territory}}'; // Load this before the editor, look for a specific *host* that the editor/chmln is disabled on
 
   chmlnStart();
   logCurrentUrl();
@@ -61,6 +66,11 @@
       /:\/\/dashboard\.trychameleon/.test(event.origin) && (launcher = event.source);
     });
     setTimeout(function() { win.removeEventListener('message', onMessage) }, 750);
+  }
+
+  var urlOptions = { host: win.location.hostname };
+  function hiddenOnHostname() {
+    try { return chmln.data.urls.findWhere(urlOptions).get('hide_all'); } catch(e) { }
   }
 
   function fetchPreviewModel() {
@@ -133,17 +143,16 @@
   }
 
   function logCurrentUrl() {
-    var options = { host: win.location.hostname },
-      accountId, model;
+    var accountId, model;
 
     try {
       accountId = chmln.data.account.id;
-      model = chmln.data.urls.findWhere(options);
+      model = chmln.data.urls.findWhere(urlOptions);
     } catch(e) { }
 
-    if(!options.host || !accountId || chmln.adminPreview) { return; }
+    if(!urlOptions.host || !accountId || chmln.adminPreview) { return; }
 
-    model || (model = new chmln.models.Url(options));
+    model || (model = new chmln.models.Url(urlOptions));
 
     var checkFeatures = function() {
       model.set(chmln.lib.Feature.all(model));
