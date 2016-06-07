@@ -1,6 +1,8 @@
 (function(win,doc,root) {
   var elusiveToUsers = /user/.test(root.elusive),
-    elusiveToAdmins = /admin/.test(root.elusive);
+    elusiveToAdmins = /admin/.test(root.elusive),
+    previewKey = 'e:lPs:id', dataLoaded,
+    urlOptions = { host: win.location.hostname};
 
   clearUrlTokens();
 
@@ -25,10 +27,6 @@
   if(hiddenOnHostname()) {
     return (chmln.isDisabled = true);
   }
-
-  var previewKey = 'e:lPs:id',
-    urlOptions = { host: win.location.hostname},
-    dataLoaded;
 
   if(!elusiveToAdmins) {
   '{{editor}}';
