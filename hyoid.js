@@ -10,6 +10,8 @@
     return;
   }
 
+  root.location || (root.location = win.location.href.toString());
+
   '{{chmln}}';
   var i, keys = Object.keys(root),
     chmln = win.chmln;
