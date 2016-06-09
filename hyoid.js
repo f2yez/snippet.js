@@ -1,7 +1,7 @@
 (function(win,doc,root) {
   var elusiveToUsers = /user/.test(root.elusive),
     elusiveToAdmins = /admin/.test(root.elusive),
-    previewKey = 'e:lPs:id', dataLoaded,
+    dataLoaded,
     urlOptions = { host: win.location.hostname};
 
   clearUrlTokens();
@@ -74,7 +74,7 @@
   }
 
   function fetchPreviewModel() {
-    var sessionModel = chmln.lib.session.get(previewKey);
+    var sessionModel = chmln.lib.session.get(previewKey());
 
     if(sessionModel) {
       try { return chmln.lib.Marshal.load(sessionModel); } catch(e) { }
@@ -108,8 +108,12 @@
     chmln.start();
   }
 
+  function previewKey() {
+    try { return chmln.Editor.lib.Preview.modelStorageKey; } catch(e) { }
+  }
+
   function previewStart(model) {
-    chmln.lib.session.set(previewKey, chmln.lib.Marshal.dump(model));
+    chmln.lib.session.set(previewKey(), chmln.lib.Marshal.dump(model));
     chmln.Editor.lib.Preview.show(model);
   }
 
