@@ -56,7 +56,7 @@
 
   function clearUrlTokens() {
     var url = win.location.href,
-      modified = url.replace(/chmln-linked=[a-z]+:.{16}/, '');
+      modified = url.replace(/chmln-linked=[a-z]+-.{16}/, '');
 
     try { url !== modified && (modified = modified.replace(/\?$/, '').replace(/(&|\?)#/, '#')) && win.history.replaceState(null, null, modified); } catch(e) { }
   }
@@ -90,8 +90,9 @@
       xhrFields: { withCredentials: true }
     });
 
-    xhr.done(function(data) { chmln._data(data); });
-    xhr.always(function() {
+    xhr.done(function(data) {
+      chmln._data(data);
+
       dataLoaded = true;
       editorStart();
     });
