@@ -4,13 +4,13 @@
     dataLoaded,
     urlOptions = { host: win.location.hostname};
 
+  root.location || (root.location = win.location.href.toString());
+
   clearUrlTokens();
 
   if(root.root || elusiveToUsers) {
     return;
   }
-
-  root.location || (root.location = win.location.href.toString());
 
   '{{chmln}}';
   var i, keys = Object.keys(root),
