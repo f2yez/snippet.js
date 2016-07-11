@@ -6,8 +6,6 @@
 
   root.location || (root.location = win.location.href.toString());
 
-  clearUrlTokens();
-
   if(root.root || elusiveToUsers) {
     return;
   }
@@ -22,6 +20,7 @@
     }
   }
 
+  clearUrlTokens();
   captureParentWindow();
 
   '{{territory}}';
@@ -56,9 +55,9 @@
 
   function clearUrlTokens() {
     var url = win.location.href,
-      modified = url.replace(/chmln-linked=[a-z]+-.{16}/, '');
+      modified;
 
-    try { url !== modified && (modified = modified.replace(/\?$/, '').replace(/(&|\?)#/, '#')) && win.history.replaceState(null, null, modified); } catch(e) { }
+    try { (modified = url.replace(chmln.lib.DeepLinked.regex, '')) && url !== modified && (modified = modified.replace(/\?$/, '').replace(/(&|\?)#/, '#')) && win.history.replaceState(null, null, modified); } catch(e) { }
   }
 
   var launcher;
@@ -74,14 +73,17 @@
   }
 
   function fetchPreviewModel() {
-    var sessionModel = chmln.lib.session.get(previewKey());
+    var sessionModel = chmln.lib.session.get(previewKey()),
+      model = null;
 
     if(sessionModel) {
-      try { return chmln.lib.Marshal.load(sessionModel); } catch(e) { }
+      try { model = chmln.lib.Marshal.load(sessionModel); } catch(e) { }
     }
 
-    try { return win.opener.chmln.Editor.lib.Preview.model; } catch(e) { }
-    try { return chmln.lib.DeepLinked.model(); } catch(e) { }
+    try { model || (model = win.opener.chmln.Editor.lib.Preview.model); } catch(e) { }
+    try { model || (model = chmln.lib.DeepLinked.model()); chmln.lib.DeepLinked.clear(); } catch(e) { }
+
+    return model;
   }
 
   function fetchEditorData() {
