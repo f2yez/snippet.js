@@ -2,7 +2,7 @@
   var elusiveToUsers = /user/.test(root.elusive),
     elusiveToAdmins = /admin/.test(root.elusive),
     dataLoaded,
-    urlOptions = { host: win.location.hostname};
+    urlOptions = { host: win.location.hostname, port: win.location.port};
 
   root.location || (root.location = win.location.href.toString());
 
