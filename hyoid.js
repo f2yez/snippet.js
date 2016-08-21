@@ -2,7 +2,7 @@
   var elusiveToUsers = /user/.test(root.elusive),
     elusiveToAdmins = /admin/.test(root.elusive),
     dataLoaded,
-    urlOptions = { host: win.location.hostname, port: win.location.port};
+    urlOptions = { host: hostname()};
 
   root.location || (root.location = win.location.href.toString());
 
@@ -66,6 +66,11 @@
       /:\/\/dashboard\.trychameleon/.test(event.origin) && (launcher = event.source);
     });
     setTimeout(function() { win.removeEventListener('message', onMessage) }, 750);
+  }
+
+  function hostname() {
+    var host = win.location.hostname, port = win.location.port;
+    return host + (port.length && !/^8008|8080|443|280|80$/.test(port) ? ':'+port : '');
   }
 
   function hiddenOnHostname() {
