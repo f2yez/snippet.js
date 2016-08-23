@@ -70,7 +70,7 @@
 
   function hostname() {
     var host = win.location.hostname, port = win.location.port;
-    return host + (port.length && !/^8008|8080|443|280|80$/.test(port) ? ':'+port : '');
+    return host + (port.length && !/^443|80$/.test(port) ? ':'+port : '');
   }
 
   function hiddenOnHostname() {
