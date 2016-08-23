@@ -2,7 +2,7 @@
   var elusiveToUsers = /user/.test(root.elusive),
     elusiveToAdmins = /admin/.test(root.elusive),
     dataLoaded,
-    urlOptions = { host: win.location.hostname};
+    urlOptions = { host: urlHost() };
 
   root.location || (root.location = win.location.href.toString());
 
@@ -66,6 +66,10 @@
       /:\/\/dashboard\.trychameleon/.test(event.origin) && (launcher = event.source);
     });
     setTimeout(function() { win.removeEventListener('message', onMessage) }, 750);
+  }
+
+  function urlHost() { var port = win.location.port;
+    return win.location.hostname + (port ? ':'+port : '');
   }
 
   function hiddenOnHostname() {
@@ -157,7 +161,9 @@
       model = chmln.data.urls.findWhere(urlOptions);
     } catch(e) { }
 
-    if(!urlOptions.host || !accountId || chmln.adminPreview) { return; }
+    if(!urlOptions.host || !accountId || chmln.adminPreview || /^http:\/\/(site|camouflage)\.trychameleon\.dev/.test(chmln.location)) {
+      return;
+    }
 
     model || (model = new chmln.models.Url(urlOptions));
 
