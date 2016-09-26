@@ -1,8 +1,7 @@
 (function(win,doc,root) {
   var elusiveToUsers = /user/.test(root.elusive),
     elusiveToAdmins = /admin/.test(root.elusive),
-    dataLoaded,
-    urlOptions = { host: urlHost() };
+    launcher;
 
   root.location || (root.location = win.location.href.toString());
 
@@ -25,7 +24,7 @@
 
   '{{territory}}';
 
-  if(hiddenOnHostname()) {
+  if(chmln.decorators.Urls.isHidden()) {
     return (chmln.isDisabled = true);
   }
 
@@ -35,12 +34,10 @@
 
   if(!(chmln.isEditing = !!chmln.Editor)) {
   '{{habitat}}';
+  chmln.start();
   }
 
-  chmlnStart();
-  logCurrentUrl();
-
-  if(chmln.Editor) {
+  if(chmln.isEditing) {
     fetchEditorData();
     launcherNotify('loading');
   }
@@ -60,7 +57,6 @@
     try { (modified = url.replace(chmln.lib.DeepLinked.regex, '')) && url !== modified && (modified = modified.replace(/\?$/, '').replace(/(&|\?)#/, '#')) && win.history.replaceState(null, null, modified); } catch(e) { }
   }
 
-  var launcher;
   function captureParentWindow() { var onMessage;
     win.addEventListener('message', onMessage = function(event) {
       /:\/\/dashboard\.trychameleon/.test(event.origin) && (launcher = event.source);
@@ -68,24 +64,14 @@
     setTimeout(function() { win.removeEventListener('message', onMessage) }, 750);
   }
 
-  function urlHost() { var port = win.location.port;
-    return win.location.hostname + (port ? ':'+port : '');
-  }
-
-  function hiddenOnHostname() {
-    try { return chmln.data.urls.findWhere(urlOptions).get('hide_all'); } catch(e) { }
-  }
-
   function fetchPreviewModel() {
-    var sessionModel = chmln.lib.session.get(previewKey()),
-      model = null;
-
-    if(sessionModel) {
-      try { model = chmln.lib.Marshal.load(sessionModel); } catch(e) { }
-    }
+    var Preview = chmln.Editor.lib.Preview,
+      model = chmln.lib.Cache.get(Preview.key);
 
     try { model || (model = win.opener.chmln.Editor.lib.Preview.model); } catch(e) { }
     try { model || (model = chmln.lib.DeepLinked.model()); chmln.lib.DeepLinked.clear(); } catch(e) { }
+
+    model && chmln.lib.Cache.set(Preview.key, model);
 
     return model;
   }
@@ -99,78 +85,32 @@
     xhr.done(function(data) {
       chmln._data(data);
 
-      dataLoaded = true;
       editorStart();
     });
   }
 
-  var chmlnStarted = false,
-    editorStarted = false;
+  function editorStart() {
+    var status = 'started',
+      previewModel = fetchPreviewModel(),
+      accountId = chmln.lib.get(chmln.data, 'account.id');
 
-  function chmlnStart() {
-    if(chmlnStarted) return;
-    chmlnStarted = true;
+    chmln.isPreviewing = !!previewModel;
+
+    if(!previewModel && !accountId) {
+      delete chmln.Editor;
+      chmln.isEditing = false;
+
+      status = 'not_authorized:'+root.accountToken;
+    }
 
     chmln.start();
-  }
 
-  function previewKey() {
-    try { return chmln.Editor.lib.Preview.modelStorageKey; } catch(e) { }
-  }
-
-  function previewStart(model) {
-    chmln.lib.session.set(previewKey(), chmln.lib.Marshal.dump(model));
-    chmln.Editor.lib.Preview.show(model);
-  }
-
-  function editorStart() {
-    if(editorStarted) return;
-    if(dataLoaded) {
-      var status = 'started',
-        previewModel = fetchPreviewModel();
-
-      chmln.isPreviewing = !!previewModel;
-
-      if(previewModel) {
-        previewStart(previewModel);
-      } else if(chmln.data && chmln.data.account) {
-        chmln.Editor.start();
-
-        logCurrentUrl();
-      } else {
-        status = 'not_authorized:'+root.accountToken;
-        // win.chmln.isEditing = false;
-        // chmln.data.profile.set('admin', false);
-        ////
-        // TODO Note you should not be editing when you do not have permission for the account `chmln.data.account`
-        // TODO win.chmln.editor404();
-        //
-      }
-
-      launcherNotify(status);
-
-      editorStarted = true;
-    }
-  }
-
-  function logCurrentUrl() {
-    var accountId, model;
-
-    try {
-      accountId = chmln.data.account.id;
-      model = chmln.data.urls.findWhere(urlOptions);
-    } catch(e) { }
-
-    if(!urlOptions.host || !accountId || chmln.adminPreview || /^http:\/\/(site|camouflage)\.trychameleon\.dev/.test(chmln.location)) {
-      return;
+    if(previewModel) {
+      chmln.Editor.lib.Preview.show(previewModel);
+    } else if(accountId) {
+      chmln.Editor.start();
     }
 
-    model || (model = new chmln.models.Url(urlOptions));
-
-    var checkFeatures = function() {
-      model.set(chmln.lib.Feature.all(model));
-      model.save();
-    };
-    chmln._([0,1,9]).each(function(i) { win.setTimeout(checkFeatures, i*2000) });
+    launcherNotify(status);
   }
 })(window,document,window.chmln);
