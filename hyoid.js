@@ -34,6 +34,7 @@
 
   if(!(chmln.isEditing = !!chmln.Editor)) {
   '{{habitat}}';
+  showLinkedModel();
   chmln.start();
   }
 
@@ -64,12 +65,26 @@
     setTimeout(function() { win.removeEventListener('message', onMessage) }, 750);
   }
 
+  function showLinkedModel() {
+    var model = fetchLinkedModel();
+
+    model && chmln.show(model);
+  }
+
+  function fetchLinkedModel() {
+    var model = chmln.lib.DeepLinked.model();
+
+    chmln.lib.DeepLinked.clear();
+
+    return model;
+  }
+
   function fetchPreviewModel() {
     var Preview = chmln.Editor.lib.Preview,
       model = chmln.lib.Cache.get(Preview.key);
 
     try { model || (model = win.opener.chmln.Editor.lib.Preview.model); } catch(e) { }
-    try { model || (model = chmln.lib.DeepLinked.model()); chmln.lib.DeepLinked.clear(); } catch(e) { }
+    try { model || (model = fetchLinkedModel()); } catch(e) { }
 
     model && chmln.lib.Cache.set(Preview.key, model);
 
