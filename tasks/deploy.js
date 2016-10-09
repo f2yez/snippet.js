@@ -17,6 +17,7 @@
     zlib = require('zlib'),
     gzippedBody = zlib.gzipSync(files.readFileSync(directory+'/hyoid.js'));
 
+
   console.log('Gzipped to: '+Buffer.byteLength(gzippedBody.toString())/1024+'KB');
 
   var requestOptions = {
