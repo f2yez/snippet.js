@@ -91,6 +91,10 @@
     return model;
   }
 
+  function fetchPreviewStep() {
+    try { return win.opener.chmln.Editor.lib.Preview.step; } catch(e) { }
+  }
+
   function fetchEditorData() {
     var xhr = chmln.$.ajax(buildURL('edit', root.accountToken+'/ecosystem.json'), {
       type: 'GET', crossDomain: true,
@@ -121,7 +125,7 @@
     chmln.start();
 
     if(previewModel) {
-      chmln.Editor.lib.Preview.show(previewModel);
+      chmln.Editor.lib.Preview.show(previewModel, fetchPreviewStep());
     } else if(accountId) {
       chmln.Editor.start();
     }
