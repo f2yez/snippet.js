@@ -32,8 +32,10 @@
   '{{editor}}';
   }
 
+  var habitatData = function() { '{{habitat}}'; };
+
   if(!(chmln.isEditing = !!chmln.Editor)) {
-  '{{habitat}}';
+  habitatData();
   showLinkedModel();
   chmln.start();
   }
@@ -116,6 +118,8 @@
       chmln.isEditing = false;
 
       status = 'not_authorized:'+root.accountToken;
+
+      habitatData();
     }
 
     chmln.start();
