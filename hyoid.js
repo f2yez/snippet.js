@@ -83,12 +83,13 @@
 
   function fetchPreviewModel() {
     var Preview = chmln.Editor.lib.Preview,
-      model = chmln.lib.Cache.get(Preview.key);
+      session = new chmln.lib.Cache({ store: chmln.lib.Session }),
+      model = session.get(Preview.key);
 
     try { model || (model = win.opener.chmln.Editor.lib.Preview.model); } catch(e) { }
     try { model || (model = fetchLinkedModel()); } catch(e) { }
 
-    model && chmln.lib.Cache.set(Preview.key, model);
+    model && session.set(Preview.key, model);
 
     return model;
   }
