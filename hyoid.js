@@ -90,6 +90,7 @@
     try { model || (model = fetchLinkedModel()); } catch(e) { }
 
     model && session.set(Preview.key, model);
+    model && (model = session.get(Preview.key));
 
     return model;
   }
