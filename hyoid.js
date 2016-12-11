@@ -3,21 +3,13 @@
     elusiveToAdmins = /admin/.test(root.elusive),
     launcher;
 
-  root.location || (root.location = win.location.href.toString());
-
   if(root.root || elusiveToUsers) {
     return;
   }
 
+  root.location || (root.location = win.location.href.toString());
   '{{chmln}}';
-  var i, keys = Object.keys(root),
-    chmln = win.chmln;
-
-  for(i=0; i<keys.length; ++i) {
-    if(root.hasOwnProperty(keys[i]) && !chmln[keys[i]]) {
-      chmln[keys[i]] = root[keys[i]];
-    }
-  }
+  var chmln = win.chmln;
 
   clearUrlTokens();
   captureParentWindow();
@@ -37,6 +29,7 @@
   if(!(chmln.isEditing = !!chmln.Editor)) {
   habitatData();
   showLinkedModel();
+  copyFromRoot();
   chmln.start();
   }
 
@@ -95,6 +88,16 @@
     return model;
   }
 
+  function copyFromRoot() {
+    var i, keys = Object.keys(root);
+
+    for(i=0; i<keys.length; ++i) {
+      if(root.hasOwnProperty(keys[i]) && !chmln[keys[i]]) {
+        chmln[keys[i]] = root[keys[i]];
+      }
+    }
+  }
+
   function fetchEditorData() {
     var xhr = chmln.$.ajax(buildURL('edit', root.accountToken+'/ecosystem.json'), {
       type: 'GET', crossDomain: true,
@@ -109,6 +112,8 @@
   }
 
   function editorStart() {
+    copyFromRoot();
+
     var status = 'started',
       previewModel = fetchPreviewModel(),
       accountId = chmln.lib.get(chmln.data, 'account.id');
