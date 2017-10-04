@@ -3,8 +3,15 @@
     names = 'setup identify alias track set show on off custom help _data'.split(' ');
 
   win[chmln] || (win[chmln] = {});
+
+  if(win[chmln].root) {
+    return;
+  }
+
   win[chmln].accountToken = token;
   win[chmln].location = win.location.href.toString();
+  win[chmln].now = new Date();
+
 
   for(var i = 0; i<names.length; i++) {
     (function() {

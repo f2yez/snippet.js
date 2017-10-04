@@ -1,7 +1,7 @@
 require('./helpers/spec_helper.js');
 
 describe('micro', function() {
-  var elementTagNames, appendedChildren, localGets;
+  var elementTagNames, appendedChildren;
   var requireShort = function() {
     delete require.cache[process.cwd()+'/index.js'];
 
@@ -13,17 +13,11 @@ describe('micro', function() {
   beforeEach(function() {
     elementTagNames = [];
     appendedChildren = [];
-    localGets = {};
 
     delete global.chmln;
 
     window = {
       location: { href: 'https://yoursite.com' },
-      localStorage: {
-        getItem: function(key) {
-          return localGets[key];
-        }
-      }
     };
 
     document = {
@@ -53,6 +47,10 @@ describe('micro', function() {
       expect(chmln.location).toBe('https://yoursite.com');
     });
 
+    it('should have the window location', function() {
+      expect(chmln.now instanceof Date).toBe(true);
+    });
+
     it('should add the script', function() {
       expect(elementTagNames.length).toBe(1);
     });
@@ -72,6 +70,24 @@ describe('micro', function() {
     it('should append the scripts to the head', function() {
       expect(appendedChildren.length).toBe(1);
       expect(appendedChildren[0]).toBe(elementTagNames[0]);
+    });
+
+    describe('when chmln has a "root"', function() {
+      var previous;
+
+      beforeEach(function() {
+        delete global.chmln;
+        delete window.chmln;
+
+        previous = chmln = window.chmln = { root: true, accountToken: '5' }; // or anything truthy
+
+        requireShort();
+      });
+
+      it('should not change anything ', function() {
+        expect(previous).toBe(chmln);
+        expect(chmln.accountToken).toBe('5');
+      });
     });
   });
 
