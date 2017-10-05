@@ -9,9 +9,6 @@ microify:
 minify:
 	./node_modules/uglify-js/bin/uglifyjs index.js --compress --mangle --stats --output index.min.js
 
-deploy:
-	@node tasks/deploy
-
 clean:
 	if [ -e index.js ]; then rm index.js; fi
 
