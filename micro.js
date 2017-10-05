@@ -1,9 +1,13 @@
 (function(doc,win,token) {
   var chmln = 'chmln',
+    admin = 'adminPreview',
     names = 'setup identify alias track set show on off custom help _data'.split(' ');
 
   win[chmln] || (win[chmln] = {});
 
+  if(win[chmln][admin]) {
+    win[chmln][admin] = false;
+  }
   if(win[chmln].root) {
     return;
   }

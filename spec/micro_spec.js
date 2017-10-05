@@ -84,9 +84,22 @@ describe('micro', function() {
         requireShort();
       });
 
-      it('should not change anything ', function() {
+      it('should not change anything', function() {
         expect(previous).toBe(chmln);
         expect(chmln.accountToken).toBe('5');
+      });
+    });
+
+    describe('when chmln was added via extension', function() {
+      beforeEach(function() {
+        chmln.adminPreview = true;
+
+        requireShort();
+      });
+
+      it('should remove the flag', function() {
+        expect(chmln.adminPreview).toBe(false);
+        expect(Object.keys(chmln).indexOf('adminPreview')).toBeGreaterThan(10);
       });
     });
   });
